@@ -17,7 +17,7 @@ final class SendCodeRouter {
 
 extension SendCodeRouter: SendCodeRouterProtocol {
     func sendCodeToLoginScreen() {
-        guard let view = presenter?.view else { return }
-        self.popToRoot(view, animated: true)
+        guard let currentView = presenter?.view else { return }
+        self.popToRoot(currentView, animated: true)
     }
 }

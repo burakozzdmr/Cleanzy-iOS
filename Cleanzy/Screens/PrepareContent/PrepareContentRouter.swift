@@ -5,7 +5,7 @@
 //  Created by Burak Özdemir on 13.11.2025.
 //
 
-import Foundation
+import UIKit
 
 // MARK: - PrepareContentRouter
 
@@ -17,6 +17,7 @@ final class PrepareContentRouter {
 
 extension PrepareContentRouter: PrepareContentRouterProtocol {
     func prepareContentToHomeScreen() {
-        //TODO: PREPARE CONTENT TO HOME SCREEN TRANSITION LOGIC
+        guard let currentView = presenter?.view else { return }
+        self.push(currentViewController: currentView, targetViewController: TabBarController(), animated: true)
     }
 }

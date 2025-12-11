@@ -17,16 +17,17 @@ final class LoginRouter {
 
 extension LoginRouter: LoginRouterProtocol {
     func loginToHomeScreen() {
-        // TODO: LOGIN TO HOME SCREEN TRANSITION LOGIC
+        guard let currentView = presenter?.view else { return }
+        self.push(currentViewController: currentView, targetViewController: TabBarController(), animated: true)
     }
     
     func loginToForgotPasswordScreen() {
-        guard let view = presenter?.view else { return }
-        self.push(currentViewController: view, targetViewController: ForgotPasswordBuilder.createModule(), animated: true)
+        guard let currentView = presenter?.view else { return }
+        self.push(currentViewController: currentView, targetViewController: ForgotPasswordBuilder.createModule(), animated: true)
     }
     
     func loginToRegisterScreen() {
-        guard let view = presenter?.view else { return }
-        self.push(currentViewController: view, targetViewController: RegisterBuilder.createModule(), animated: true)
+        guard let currentView = presenter?.view else { return }
+        self.push(currentViewController: currentView, targetViewController: RegisterBuilder.createModule(), animated: true)
     }
 }
