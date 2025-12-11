@@ -14,6 +14,13 @@ class TabBarController: UITabBarController {
         
         setupTabBar()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+        navigationItem.hidesBackButton = true
+    }
 }
 
 // MARK: - Privates
@@ -61,7 +68,6 @@ private extension TabBarController {
             systemName: imagePath.contains(".fill") ? imagePath : "\(imagePath).fill"
         )
         
-        navigationItem.hidesBackButton = true
         return navController
     }
 }
