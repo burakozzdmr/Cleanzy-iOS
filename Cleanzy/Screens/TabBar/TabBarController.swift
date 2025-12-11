@@ -22,14 +22,29 @@ private extension TabBarController {
     func setupTabBar() {
         let homepageVC = createNavigationController(
             with: "Anasayfa",
-            and: "house.fill",
+            and: "house",
             from: HomepageBuilder.createModule()
         )
+        let chatVC = createNavigationController(
+            with: "Sohbet",
+            and: "bubble.left.and.bubble.right",
+            from: ChatBuilder.createModule()
+        )
+        let favoritesVC = createNavigationController(
+            with: "Favoriler",
+            and: "heart",
+            from: FavoritesBuilder.createModule()
+        )
+        let profileVC = createNavigationController(
+            with: "Profil",
+            and: "person",
+            from: ProfileBuilder.createModule()
+        )
         
-        self.setViewControllers([homepageVC], animated: false)
+        self.setViewControllers([homepageVC, chatVC, favoritesVC, profileVC], animated: false)
         
-        self.tabBar.backgroundColor = .white
-        self.tabBar.tintColor = .accent
+        self.tabBar.backgroundColor = .accent
+        self.tabBar.tintColor = .white
         self.tabBar.unselectedItemTintColor = .lightGray
     }
     
@@ -40,10 +55,13 @@ private extension TabBarController {
     ) -> UINavigationController {
         let navController = UINavigationController(rootViewController: viewController)
         navController.tabBarItem.title = title
-        navController.tabBarItem.image = .init(systemName: imagePath)
+        navController.tabBarItem.image = UIImage(systemName: imagePath)
+        
+        navController.tabBarItem.selectedImage = UIImage(
+            systemName: imagePath.contains(".fill") ? imagePath : "\(imagePath).fill"
+        )
         
         navigationItem.hidesBackButton = true
-        
         return navController
     }
 }
