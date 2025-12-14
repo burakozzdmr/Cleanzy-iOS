@@ -11,7 +11,7 @@ import FirebaseAuthCombineSwift
 import FirebaseFirestore
 import FirebaseFirestoreCombineSwift
 
-protocol AuthenticationManagerProtocol: AnyObject {
+protocol AuthenticationManagerProtocol {
     func signIn(with email: String, and password: String, as userTypeIndex: Int) -> AnyPublisher<AuthDataResult, AuthenticationError>
     func signUp(with email: String, and password: String, as userTypeIndex: Int) -> AnyPublisher<AuthDataResult, AuthenticationError>
     func signOut() -> AnyPublisher<Void, AuthenticationError>
