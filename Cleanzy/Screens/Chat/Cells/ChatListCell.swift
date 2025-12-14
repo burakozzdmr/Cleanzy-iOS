@@ -53,6 +53,9 @@ class ChatListCell: UITableViewCell {
         label.text = ""
         label.textColor = .white
         label.font = .systemFont(ofSize: 10, weight: .bold)
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 16
+        label.backgroundColor = .accent
         return label
     }()
     
@@ -116,6 +119,7 @@ private extension ChatListCell {
         messageCountLabel.snp.makeConstraints {
             $0.top.equalTo(userNameLabel.snp.bottom).offset(8)
             $0.trailing.equalToSuperview().inset(24)
+            $0.width.height.equalTo(32)
         }
     }
 }
