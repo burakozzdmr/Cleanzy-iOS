@@ -14,19 +14,11 @@ final class ChatViewController: UIViewController {
     
     var presenter: ChatPresenterProtocol!
     
-    private let chatsLabel: UILabel = {
-        let label: UILabel = .init()
-        label.text = "Sohbetler"
-        label.textColor = .black
-        label.font = .systemFont(ofSize: 24, weight: .semibold)
-        return label
-    }()
-    
-    private lazy var searchBar: UISearchBar = {
-        let searchBar: UISearchBar = .init()
-        searchBar.delegate = self
-        searchBar.placeholder = "Ara..."
-        return searchBar
+    private lazy var searchController: UISearchController = {
+        let searchController: UISearchController = .init()
+        searchController.searchBar.placeholder = "Ara..."
+        searchController.searchResultsUpdater = self
+        return searchController
     }()
     
     private lazy var chatsTableView: UITableView = {
@@ -55,31 +47,22 @@ private extension ChatViewController {
         configureLayout()
         
         view.backgroundColor = .white
+    
+        navigationItem.title = "Sohbetler"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        navigationItem.searchController = searchController
     }
     
     func addViews() {
         view.addSubviews([
-            chatsLabel,
-            searchBar,
             chatsTableView
         ])
     }
     
     func configureLayout() {
-        chatsLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(24)
-            $0.leading.equalToSuperview().offset(16)
-        }
-        
-        searchBar.snp.makeConstraints {
-            $0.top.equalTo(chatsLabel.snp.bottom).offset(16)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(384)
-        }
-        
         chatsTableView.snp.makeConstraints {
-            $0.top.equalTo(searchBar.snp.bottom)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
     }
 }
@@ -108,10 +91,12 @@ extension ChatViewController: UITableViewDelegate {
     
 }
 
-// MARK: - UISearchBarDelegate
+// MARK: - UISearchResultsUpdating
 
-extension ChatViewController: UISearchBarDelegate {
-    
+extension ChatViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        
+    }
 }
 
 #Preview {
