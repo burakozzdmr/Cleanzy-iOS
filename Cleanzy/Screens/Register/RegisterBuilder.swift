@@ -15,7 +15,7 @@ extension RegisterBuilder: RegisterBuilderProtocol {
     static func createModule() -> UIViewController {
         let view = RegisterViewController()
         let presenter = RegisterPresenter()
-        let interactor = RegisterInteractor(authenticationManager: AuthenticationManager())
+        let interactor = RegisterInteractor()
         let router = RegisterRouter()
         
         view.presenter = presenter

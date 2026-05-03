@@ -14,7 +14,7 @@ final class ForgotPasswordBuilder { }
 extension ForgotPasswordBuilder: ForgotPasswordBuilderProtocol {
     static func createModule() -> UIViewController {
         let viewController = ForgotPasswordViewController()
-        let interactor = ForgotPasswordInteractor(authenticationManager: AuthenticationManager())
+        let interactor = ForgotPasswordInteractor()
         let presenter = ForgotPasswordPresenter()
         let router = ForgotPasswordRouter()
         
