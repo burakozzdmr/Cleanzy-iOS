@@ -6,15 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		0817006E2EBF6BFD00247B83 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 0817006D2EBF6BFD00247B83 /* FirebaseAuthCombine-Community */; };
-		081700702EBF6BFD00247B83 /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 0817006F2EBF6BFD00247B83 /* FirebaseFirestoreCombine-Community */; };
-		081700722EBF6BFD00247B83 /* FirebaseFunctionsCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 081700712EBF6BFD00247B83 /* FirebaseFunctionsCombine-Community */; };
-		081700742EBF6BFD00247B83 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 081700732EBF6BFD00247B83 /* FirebaseStorageCombine-Community */; };
-		0817FE272EBF524100247B83 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 0817FE262EBF524100247B83 /* Lottie */; };
-		0817FE2A2EBF556000247B83 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0817FE292EBF556000247B83 /* SnapKit */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		08D3DD5C2EBE265D0065AAD4 /* Cleanzy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cleanzy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -45,12 +36,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0817FE272EBF524100247B83 /* Lottie in Frameworks */,
-				081700702EBF6BFD00247B83 /* FirebaseFirestoreCombine-Community in Frameworks */,
-				0817006E2EBF6BFD00247B83 /* FirebaseAuthCombine-Community in Frameworks */,
-				081700722EBF6BFD00247B83 /* FirebaseFunctionsCombine-Community in Frameworks */,
-				081700742EBF6BFD00247B83 /* FirebaseStorageCombine-Community in Frameworks */,
-				0817FE2A2EBF556000247B83 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,12 +78,6 @@
 			);
 			name = Cleanzy;
 			packageProductDependencies = (
-				0817FE262EBF524100247B83 /* Lottie */,
-				0817FE292EBF556000247B83 /* SnapKit */,
-				0817006D2EBF6BFD00247B83 /* FirebaseAuthCombine-Community */,
-				0817006F2EBF6BFD00247B83 /* FirebaseFirestoreCombine-Community */,
-				081700712EBF6BFD00247B83 /* FirebaseFunctionsCombine-Community */,
-				081700732EBF6BFD00247B83 /* FirebaseStorageCombine-Community */,
 			);
 			productName = Cleanzy;
 			productReference = 08D3DD5C2EBE265D0065AAD4 /* Cleanzy.app */;
@@ -129,9 +108,6 @@
 			mainGroup = 08D3DD532EBE265D0065AAD4;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				0817FE252EBF524100247B83 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				0817FE282EBF556000247B83 /* XCRemoteSwiftPackageReference "SnapKit" */,
-				0817006C2EBF6BFD00247B83 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 08D3DD5D2EBE265D0065AAD4 /* Products */;
@@ -385,66 +361,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		0817006C2EBF6BFD00247B83 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 12.5.0;
-			};
-		};
-		0817FE252EBF524100247B83 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.5.2;
-			};
-		};
-		0817FE282EBF556000247B83 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.7.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		0817006D2EBF6BFD00247B83 /* FirebaseAuthCombine-Community */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0817006C2EBF6BFD00247B83 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = "FirebaseAuthCombine-Community";
-		};
-		0817006F2EBF6BFD00247B83 /* FirebaseFirestoreCombine-Community */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0817006C2EBF6BFD00247B83 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = "FirebaseFirestoreCombine-Community";
-		};
-		081700712EBF6BFD00247B83 /* FirebaseFunctionsCombine-Community */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0817006C2EBF6BFD00247B83 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = "FirebaseFunctionsCombine-Community";
-		};
-		081700732EBF6BFD00247B83 /* FirebaseStorageCombine-Community */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0817006C2EBF6BFD00247B83 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = "FirebaseStorageCombine-Community";
-		};
-		0817FE262EBF524100247B83 /* Lottie */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0817FE252EBF524100247B83 /* XCRemoteSwiftPackageReference "lottie-ios" */;
-			productName = Lottie;
-		};
-		0817FE292EBF556000247B83 /* SnapKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0817FE282EBF556000247B83 /* XCRemoteSwiftPackageReference "SnapKit" */;
-			productName = SnapKit;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 08D3DD542EBE265D0065AAD4 /* Project object */;
 }
