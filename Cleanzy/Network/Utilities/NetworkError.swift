@@ -9,6 +9,7 @@ import Foundation
 
 enum NetworkError: Error {
     case invalidURL
+    case invalidRequest
     case badRequest
     case unauthorized
     case forbidden
@@ -16,15 +17,31 @@ enum NetworkError: Error {
     case timeOut
     case serverError
     case noInternetConnection
-    case decode
+    case decodeError
     case emptyData
+    case invalidResponse
     case statusCode(Int)
+    case general(Error)
     case apiError(APIError)
     
+    static func from(statusCode: Int) -> NetworkError {
+        switch statusCode {
+        case 400: return .badRequest
+        case 401: return .unauthorized
+        case 403: return .forbidden
+        case 404: return .notFound
+        case 408: return .timeOut
+        case 500...599: return .serverError
+        default: return .statusCode(statusCode)
+        }
+    }
+
     var networkErrorMessage: String {
         switch self {
         case .invalidURL:
             return "Geçersiz URL"
+        case .invalidRequest:
+            return "Geçersiz API isteği."
         case .badRequest:
             return "Hatalı istek"
         case .unauthorized:
@@ -39,12 +56,16 @@ enum NetworkError: Error {
             return "Sunucu hatası"
         case .noInternetConnection:
             return "İnternet bağlantısı yok"
-        case .decode:
+        case .decodeError:
             return "Veri işlenirken hata oluştu"
         case .emptyData:
             return "Veri bulunamadı"
+        case .invalidResponse:
+            return "Geçersiz veri."
         case .statusCode(let code):
             return "Hata kodu: \(code)"
+        case .general(let error):
+            return "Bilinmeyen bir hata oluştu -> \(error.localizedDescription)"
         case .apiError(let apiError):
             return apiError.apiErrorMessage
         }
