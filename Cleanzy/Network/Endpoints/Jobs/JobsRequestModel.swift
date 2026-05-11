@@ -10,7 +10,7 @@ import Foundation
 // MARK: - GetAllJobsRequestModel
 
 struct GetAllJobsRequestModel: BaseRequest {
-    var path: String { NetworkConstants.Endpoints.jobsPath }
+    var path: String { NetworkConstants.Endpoints.jobsPath + "/" }
     var method: HTTPMethod { .GET }
 }
 
@@ -33,7 +33,7 @@ struct GetJobByIDRequestModel: BaseRequest {
 // MARK: - AddJobRequestModel
 
 struct AddJobRequestModel: BaseRequest {
-    var path: String { NetworkConstants.Endpoints.jobsPath }
+    var path: String { NetworkConstants.Endpoints.jobsPath + "/" }
     var method: HTTPMethod { .POST }
 
     let cleanerID: Int

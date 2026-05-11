@@ -8,7 +8,7 @@ import Foundation
 // MARK: - GetReviewsByCleanerIDRequestModel
 
 struct GetReviewsByCleanerIDRequestModel: BaseRequest {
-    var path: String { NetworkConstants.Endpoints.reviewsPath + "/cleaner/\(cleanerID)" }
+    var path: String { NetworkConstants.Endpoints.reviewsPath + "/\(cleanerID)" }
     var method: HTTPMethod { .GET }
 
     let cleanerID: Int

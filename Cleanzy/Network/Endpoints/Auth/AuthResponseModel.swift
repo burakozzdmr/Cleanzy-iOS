@@ -11,10 +11,10 @@ import Foundation
 
 struct AuthResponseModel: Codable {
     let accessToken: String
-    let userId: Int
-    let role: String
-    let fullName: String
-    let email: String
+    let userId: Int?
+    let role: String?
+    let fullName: String?
+    let email: String?
 }
 
 // MARK: - Type Aliases

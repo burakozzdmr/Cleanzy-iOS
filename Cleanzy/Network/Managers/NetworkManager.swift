@@ -21,7 +21,7 @@ protocol NetworkManagerProtocol {
 
 final class NetworkManager {
     private let session: URLSession
-    
+
     init(session: URLSession = .init(configuration: .default)) {
         self.session = session
     }
@@ -36,11 +36,14 @@ extension NetworkManager: NetworkManagerProtocol {
     ) -> AnyPublisher<T, NetworkError> {
         switch request.buildURLRequest() {
         case .success(let urlRequest):
+            NetworkLogger.logRequest(urlRequest)
+
             let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
 
             return session.dataTaskPublisher(for: urlRequest)
                 .tryMap { data, response -> Data in
+                    NetworkLogger.logResponse(data: data, response: response)
+
                     guard let httpResponse = response as? HTTPURLResponse else {
                         throw NetworkError.invalidResponse
                     }
@@ -56,27 +59,32 @@ extension NetworkManager: NetworkManagerProtocol {
                     return data
                 }
                 .decode(type: T.self, decoder: decoder)
-                .mapError { error -> NetworkError in
+                .mapError { [url = urlRequest.url?.absoluteString] error -> NetworkError in
+                    let mapped: NetworkError
                     if let networkError = error as? NetworkError {
-                        return networkError
-                    } else if error is DecodingError {
-                        return .decodeError
+                        mapped = networkError
+                    } else if let decoding = error as? DecodingError {
+                        NetworkLogger.logError(decoding, url: url)
+                        mapped = .decodeError
                     } else if let urlError = error as? URLError {
                         switch urlError.code {
                         case .notConnectedToInternet, .networkConnectionLost:
-                            return .noInternetConnection
+                            mapped = .noInternetConnection
                         case .timedOut:
-                            return .timeOut
+                            mapped = .timeOut
                         default:
-                            return .general(error)
+                            mapped = .general(urlError)
                         }
                     } else {
-                        return .general(error)
+                        mapped = .general(error)
                     }
+                    NetworkLogger.logError(mapped, url: url)
+                    return mapped
                 }
                 .eraseToAnyPublisher()
 
         case .failure(let error):
+            NetworkLogger.logError(error)
             return Fail(error: NetworkError.general(error))
                 .eraseToAnyPublisher()
         }

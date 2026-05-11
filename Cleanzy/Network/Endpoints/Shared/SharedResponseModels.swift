@@ -38,7 +38,7 @@ struct CleanerSummaryModel: Codable {
 
 // MARK: - CleaningService
 
-enum CleaningService: String, Codable {
+enum CleaningService: String, Codable, CaseIterable {
     case HOME_CLEANING
     case OFFICE_CLEANING
     case WINDOW_CLEANING
