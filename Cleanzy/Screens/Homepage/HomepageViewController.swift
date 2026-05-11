@@ -105,7 +105,7 @@ final class HomepageViewController: UIViewController {
 
 @objc private extension HomepageViewController {
     func notificationsTapped() { }
-    func searchTapped() { }
+    func searchTapped() { presenter?.didTapSearch() }
 }
 
 // MARK: - Privates
@@ -305,6 +305,11 @@ extension HomepageViewController: UICollectionViewDataSource {
 extension HomepageViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
+        switch Section(rawValue: indexPath.section) {
+        case .cleaners:  presenter?.didSelectCleaner(at: indexPath.item)
+        case .services:  presenter?.didSelectService(at: indexPath.item)
+        case .none:      break
+        }
     }
 }
 

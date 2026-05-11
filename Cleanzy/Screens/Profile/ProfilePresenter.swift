@@ -30,9 +30,9 @@ extension ProfilePresenter: ProfilePresenterProtocol {
         case .paymentMethods:
             router?.navigateToPaymentMethods()
         case .logout:
-            KeychainManager.shared.clearSession()
-            router?.navigateToLogin()
+            view?.showLogoutConfirmation()
         default:
+
             break
         }
     }
@@ -49,5 +49,15 @@ extension ProfilePresenter: ProfileInteractorOutputProtocol {
     func didFailFetchingUserInfo(with message: String) {
         view?.hideLoading()
         view?.showAlert(with: .init(title: "Hata", message: message))
+    }
+
+    func didConfirmLogout() {
+        view?.showLoading()
+        interactor?.logout()
+    }
+
+    func didLogoutSuccess() {
+        view?.hideLoading()
+        router?.navigateToLogin()
     }
 }

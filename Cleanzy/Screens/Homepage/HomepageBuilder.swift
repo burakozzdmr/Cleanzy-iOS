@@ -20,13 +20,14 @@ extension HomepageBuilder: HomepageBuilderProtocol {
         let interactor = HomepageInteractor()
         let router = HomepageRouter()
         
-        view.presenter = presenter
-        presenter.view = view
+        view.presenter       = presenter
+        presenter.view       = view
         presenter.interactor = interactor
-        presenter.router = router
+        presenter.router     = router
         interactor.presenter = presenter
-        router.presenter = presenter
-        
+        router.presenter     = presenter
+        router.viewController = view
+
         return view
     }
 }

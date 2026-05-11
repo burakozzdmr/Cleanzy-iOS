@@ -19,12 +19,18 @@ final class SplashPresenter {
 
 extension SplashPresenter: SplashPresenterProtocol {
     func viewDidLoad() {
-        router?.splashToLogin()
+        interactor?.checkAuthStatus()
     }
 }
 
 // MARK: - SplashInteractorOutputProtocol
 
 extension SplashPresenter: SplashInteractorOutputProtocol {
-    
+    func didPassAuthCheck() {
+        router?.splashToHome()
+    }
+
+    func didFailAuthCheck() {
+        router?.splashToLogin()
+    }
 }

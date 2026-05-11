@@ -13,6 +13,7 @@ protocol ProfileViewProtocol: BaseViewProtocol, AnyObject {
     var presenter: ProfilePresenterProtocol! { get set }
 
     func displayUserInfo(name: String, memberType: String)
+    func showLogoutConfirmation()
 }
 
 // MARK: - ProfileInteractorInputProtocol
@@ -21,6 +22,7 @@ protocol ProfileInteractorInputProtocol: BaseInteractorInputProtocol, AnyObject 
     var presenter: ProfileInteractorOutputProtocol? { get set }
 
     func fetchUserInfo()
+    func logout()
 }
 
 // MARK: - ProfileInteractorOutputProtocol
@@ -28,6 +30,7 @@ protocol ProfileInteractorInputProtocol: BaseInteractorInputProtocol, AnyObject 
 protocol ProfileInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyObject {
     func didFetchUserInfo(name: String, memberType: String)
     func didFailFetchingUserInfo(with message: String)
+    func didLogoutSuccess()
 }
 
 // MARK: - ProfilePresenterProtocol
@@ -38,6 +41,7 @@ protocol ProfilePresenterProtocol: BasePresenterProtocol, AnyObject {
     var router: ProfileRouterProtocol? { get set }
 
     func didTapRow(_ row: ProfileRow)
+    func didConfirmLogout()
 }
 
 // MARK: - ProfileRouterProtocol

@@ -17,11 +17,19 @@ protocol SplashViewProtocol: BaseViewProtocol, AnyObject {
 
 protocol SplashInteractorInputProtocol: BaseInteractorInputProtocol, AnyObject {
     var presenter: SplashInteractorOutputProtocol? { get set }
+
+    /// Token kontrolü + backend doğrulaması yapar
+    func checkAuthStatus()
 }
 
 // MARK: - SplashInteractorOutputProtocol
 
-protocol SplashInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyObject { }
+protocol SplashInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyObject {
+    /// Token geçerliyse çağrılır → Home'a yönlendir
+    func didPassAuthCheck()
+    /// Token yoksa veya geçersizse çağrılır → Login'e yönlendir
+    func didFailAuthCheck()
+}
 
 // MARK: - SplashPresenterProtocol
 
@@ -35,7 +43,9 @@ protocol SplashPresenterProtocol: BasePresenterProtocol, AnyObject {
 
 protocol SplashRouterProtocol: BaseRouterProtocol, AnyObject {
     var presenter: SplashPresenterProtocol? { get set }
+
     func splashToLogin()
+    func splashToHome()
 }
 
 // MARK: - SplashBuilderProtocol

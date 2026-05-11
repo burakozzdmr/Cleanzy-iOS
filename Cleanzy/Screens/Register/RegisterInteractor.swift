@@ -35,10 +35,10 @@ extension RegisterInteractor: RegisterInteractorInputProtocol {
             } receiveValue: { [weak self] response in
                 let data = response.data
                 KeychainManager.shared.saveAccessToken(data.accessToken)
-                KeychainManager.shared.saveUserId(data.userId)
-                KeychainManager.shared.saveUserName(data.fullName)
-                KeychainManager.shared.saveUserEmail(data.email)
-                KeychainManager.shared.saveUserRole(data.role)
+                if let userId   = data.userId   { KeychainManager.shared.saveUserId(userId) }
+                if let name     = data.fullName  { KeychainManager.shared.saveUserName(name) }
+                if let email    = data.email     { KeychainManager.shared.saveUserEmail(email) }
+                if let role     = data.role      { KeychainManager.shared.saveUserRole(role) }
                 self?.presenter?.didRegisterSuccess()
             }
             .store(in: &cancellables)

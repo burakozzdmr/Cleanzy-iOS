@@ -16,16 +16,23 @@ final class SplashRouter {
 // MARK: - SplashRouterProtocol
 
 extension SplashRouter: SplashRouterProtocol {
+
     func splashToLogin() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else {
-                return
-            }
-            let authNavController = UINavigationController(rootViewController: LoginBuilder.createModule())
-            
-            UIView.transition(with: sceneDelegate.window!, duration: 0.75, options: .transitionCrossDissolve) {
-                sceneDelegate.window?.rootViewController = authNavController
-            }
-        }
+        transition(to: UINavigationController(rootViewController: LoginBuilder.createModule()))
+    }
+
+    func splashToHome() {
+        transition(to: TabBarController())
+    }
+}
+
+// MARK: - Private
+
+private extension SplashRouter {
+    func transition(to rootVC: UIViewController) {
+        guard let scene = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate,
+              let window = scene.window else { return }
+        window.rootViewController = rootVC
+        UIView.transition(with: window, duration: 0.45, options: .transitionCrossDissolve, animations: nil)
     }
 }

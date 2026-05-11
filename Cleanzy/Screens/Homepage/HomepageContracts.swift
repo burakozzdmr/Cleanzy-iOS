@@ -37,12 +37,20 @@ protocol HomepagePresenterProtocol: BasePresenterProtocol, AnyObject {
     var view: HomepageViewProtocol? { get set }
     var interactor: HomepageInteractorInputProtocol? { get set }
     var router: HomepageRouterProtocol? { get set }
+
+    func didSelectCleaner(at index: Int)
+    func didSelectService(at index: Int)
+    func didTapSearch()
 }
 
 // MARK: - HomepageRouterProtocol
 
 protocol HomepageRouterProtocol: BaseRouterProtocol, AnyObject {
     var presenter: HomepagePresenterProtocol? { get set }
+
+    func navigateToDetail(cleanerID: Int)
+    func navigateToServiceCleaners(service: CleaningService)
+    func navigateToSearch()
 }
 
 // MARK: - HomepageBuilderProtocol

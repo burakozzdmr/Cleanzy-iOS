@@ -13,10 +13,15 @@ import Foundation
 final class ProfileInteractor {
     weak var presenter: ProfileInteractorOutputProtocol?
     private let profileService: ProfileServiceProtocol
+    private let authService: AuthServiceProtocol
     private var cancellables: Set<AnyCancellable> = .init()
 
-    init(profileService: ProfileServiceProtocol = ProfileService()) {
+    init(
+        profileService: ProfileServiceProtocol = ProfileService(),
+        authService: AuthServiceProtocol = AuthService()
+    ) {
         self.profileService = profileService
+        self.authService    = authService
     }
 }
 
@@ -30,20 +35,31 @@ extension ProfileInteractor: ProfileInteractorInputProtocol {
             return
         }
 
-        let request = GetProfileRequestModel(userId: userId)
-
-        profileService.getProfile(request: request)
+        profileService.getProfile(request: GetProfileRequestModel(userId: userId))
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 if case .failure(let error) = completion {
                     self?.presenter?.didFailFetchingUserInfo(with: error.networkErrorMessage)
                 }
             } receiveValue: { [weak self] response in
-                let data = response.data
-                let name = data.fullName ?? KeychainManager.shared.userName ?? "Kullanıcı"
-                let role = data.role ?? KeychainManager.shared.userRole ?? "CUSTOMER"
+                let d          = response.data
+                let name       = d.fullName ?? KeychainManager.shared.userName ?? "Kullanıcı"
+                let role       = d.role ?? KeychainManager.shared.userRole ?? "CUSTOMER"
                 let memberType = role == "CLEANER" ? "Temizlikçi" : "Standart Üye"
+                if let n = d.fullName { KeychainManager.shared.saveUserName(n) }
+                if let e = d.email    { KeychainManager.shared.saveUserEmail(e) }
+                if let r = d.role     { KeychainManager.shared.saveUserRole(r) }
                 self?.presenter?.didFetchUserInfo(name: name, memberType: memberType)
+            }
+            .store(in: &cancellables)
+    }
+
+    func logout() {
+        authService.logout(request: LogoutRequestModel())
+            .receive(on: DispatchQueue.main)
+            .sink { _ in } receiveValue: { [weak self] _ in
+                KeychainManager.shared.clearSession()
+                self?.presenter?.didLogoutSuccess()
             }
             .store(in: &cancellables)
     }

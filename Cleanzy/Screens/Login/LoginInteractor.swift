@@ -24,6 +24,7 @@ final class LoginInteractor {
 
 extension LoginInteractor: LoginInteractorInputProtocol {
     func sendLoginRequest(with email: String, and password: String, as userTypeIndex: Int) {
+        let expectedRole = userTypeIndex == 0 ? "CUSTOMER" : "CLEANER"
         let request = LoginRequestModel(email: email, password: password)
 
         authService.login(request: request)
@@ -34,11 +35,21 @@ extension LoginInteractor: LoginInteractorInputProtocol {
                 }
             } receiveValue: { [weak self] response in
                 let data = response.data
+
+                // Rol uyuşmazlığı kontrolü
+                if let returnedRole = data.role, returnedRole != expectedRole {
+                    let expected = expectedRole == "CUSTOMER" ? "Müşteri" : "Temizlikçi"
+                    self?.presenter?.didLoginFailure(
+                        with: "Bu hesap \(expected) olarak kayıtlı değil. Lütfen doğru hesap türünü seçin."
+                    )
+                    return
+                }
+
                 KeychainManager.shared.saveAccessToken(data.accessToken)
-                KeychainManager.shared.saveUserId(data.userId)
-                KeychainManager.shared.saveUserName(data.fullName)
-                KeychainManager.shared.saveUserEmail(data.email)
-                KeychainManager.shared.saveUserRole(data.role)
+                if let userId = data.userId  { KeychainManager.shared.saveUserId(userId) }
+                if let name   = data.fullName { KeychainManager.shared.saveUserName(name) }
+                if let email  = data.email    { KeychainManager.shared.saveUserEmail(email) }
+                if let role   = data.role     { KeychainManager.shared.saveUserRole(role) }
                 self?.presenter?.didLoginSuccess()
             }
             .store(in: &cancellables)

@@ -180,6 +180,22 @@ extension ProfileViewController: ProfileViewProtocol {
     func showLoading() { }
     func hideLoading() { }
 
+    func showLogoutConfirmation() {
+        AlertManager.shared.showAlert(
+            with: AlertModel(
+                title: "Çıkış Yap",
+                message: "Hesabınızdan çıkış yapmak istediğinize emin misiniz?",
+                actions: [
+                    UIAlertAction(title: "Evet", style: .destructive) { [weak self] _ in
+                        self?.presenter?.didConfirmLogout()
+                    },
+                    UIAlertAction(title: "Hayır", style: .cancel)
+                ]
+            ),
+            from: self
+        )
+    }
+
     func showAlert(with alertModel: AlertModel) {
         AlertManager.shared.showAlert(
             with: AlertModel(title: alertModel.title, message: alertModel.message),
