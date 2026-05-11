@@ -14,6 +14,7 @@ protocol CreateMeetViewProtocol: BaseViewProtocol, AnyObject {
 
     func updateTotalPrice(_ formatted: String)
     func reloadExtraServices(_ items: [ExtraServiceItem])
+    func updatePaymentCard(label: String)
 }
 
 // MARK: - CreateMeetInteractorInputProtocol
@@ -43,6 +44,7 @@ protocol CreateMeetPresenterProtocol: BasePresenterProtocol, AnyObject {
     func didSelectHouseSize(_ size: HouseSize)
     func didToggleExtraService(at index: Int)
     func didChangeAddress(_ address: String)
+    func didSelectPaymentCard(_ card: PaymentCardItem)
     func didTapConfirm()
     func didTapBack()
 }
@@ -59,5 +61,5 @@ protocol CreateMeetRouterProtocol: BaseRouterProtocol, AnyObject {
 // MARK: - CreateMeetBuilderProtocol
 
 protocol CreateMeetBuilderProtocol: AnyObject {
-    static func createModule(cleanerID: Int, hourlyRate: Double) -> CreateMeetViewController
+    static func createModule(cleanerID: Int, hourlyRate: Double, cleanerName: String) -> CreateMeetViewController
 }

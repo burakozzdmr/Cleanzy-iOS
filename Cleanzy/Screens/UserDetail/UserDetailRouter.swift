@@ -21,9 +21,9 @@ extension UserDetailRouter: UserDetailRouterProtocol {
         pop(currentView, animated: true)
     }
 
-    func navigateToCreateMeet(cleanerID: Int, hourlyRate: Double) {
+    func navigateToCreateMeet(cleanerID: Int, hourlyRate: Double, cleanerName: String) {
         guard let currentView = presenter?.view else { return }
-        let target = CreateMeetBuilder.createModule(cleanerID: cleanerID, hourlyRate: hourlyRate)
+        let target = CreateMeetBuilder.createModule(cleanerID: cleanerID, hourlyRate: hourlyRate, cleanerName: cleanerName)
         push(currentViewController: currentView, targetViewController: target, animated: true)
     }
 }

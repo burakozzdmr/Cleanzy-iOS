@@ -16,12 +16,15 @@ final class CreateMeetPresenter {
 
     private let cleanerID: Int
     private let hourlyRate: Double
+    private let cleanerName: String
 
     private var selectedDate: Date?
     private var selectedTime: String?
     private var selectedHouseSize: HouseSize = .medium
-    private var extraServices: [ExtraServiceItem] = ExtraServiceItem.defaultList
-    private var address: String = ""
+    private var extraServices: [ExtraServiceItem]  = ExtraServiceItem.defaultList
+    private var address: String                    = ""
+    private var selectedCard: PaymentCardItem?
+    private var totalAmountRaw: Int                = 0
 
     private let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -29,9 +32,10 @@ final class CreateMeetPresenter {
         return f
     }()
 
-    init(cleanerID: Int, hourlyRate: Double) {
-        self.cleanerID = cleanerID
-        self.hourlyRate = hourlyRate
+    init(cleanerID: Int, hourlyRate: Double, cleanerName: String = "") {
+        self.cleanerID   = cleanerID
+        self.hourlyRate  = hourlyRate
+        self.cleanerName = cleanerName
     }
 }
 
@@ -60,6 +64,11 @@ extension CreateMeetPresenter: CreateMeetPresenterProtocol {
         self.address = address
     }
 
+    func didSelectPaymentCard(_ card: PaymentCardItem) {
+        selectedCard = card
+        view?.updatePaymentCard(label: cardLabel(for: card))
+    }
+
     func didToggleExtraService(at index: Int) {
         extraServices[index].isEnabled.toggle()
         view?.reloadExtraServices(extraServices)
@@ -81,7 +90,7 @@ extension CreateMeetPresenter: CreateMeetPresenterProtocol {
         }
 
         guard !address.trimmingCharacters(in: .whitespaces).isEmpty else {
-            view?.showAlert(with: .init(title: "Uyarı", message: "Lütfen adresinizi giriniz."))
+            view?.showAlert(with: .init(title: "Uyarı", message: "Lütfen haritadan adresinizi seçiniz."))
             return
         }
 
@@ -116,7 +125,11 @@ extension CreateMeetPresenter: CreateMeetInteractorOutputProtocol {
         let item = AppointmentConfirmItem.build(
             houseSize: selectedHouseSize,
             date: selectedDate,
-            timeSlot: selectedTime
+            timeSlot: selectedTime,
+            address: address,
+            totalAmount: "₺\(totalAmountRaw)",
+            paymentCard: selectedCard.map { cardLabel(for: $0) } ?? "Nakit",
+            cleanerName: cleanerName
         )
         router?.navigateToConfirmation(with: item)
     }
@@ -133,6 +146,17 @@ private extension CreateMeetPresenter {
     func recalculatePrice() {
         let base   = hourlyRate * selectedHouseSize.priceMultiplier
         let extras = extraServices.filter(\.isEnabled).reduce(0) { $0 + $1.price }
-        view?.updateTotalPrice("₺\(Int(base) + extras)")
+        totalAmountRaw = Int(base) + extras
+        view?.updateTotalPrice("₺\(totalAmountRaw)")
+    }
+
+    func cardLabel(for card: PaymentCardItem) -> String {
+        let brandName: String
+        switch card.brand {
+        case .visa:       brandName = "Visa"
+        case .mastercard: brandName = "Mastercard"
+        case .other:      brandName = "Kart"
+        }
+        return "\(brandName) \(card.maskedNumber.suffix(9))"
     }
 }

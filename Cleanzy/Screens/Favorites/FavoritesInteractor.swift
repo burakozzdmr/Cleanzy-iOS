@@ -3,26 +3,29 @@
 //  Cleanzy
 //
 
+import Combine
 import Foundation
 
 // MARK: - FavoritesInteractor
 
 final class FavoritesInteractor {
     var presenter: FavoritesInteractorOutputProtocol?
+    private var cancellables: Set<AnyCancellable> = .init()
 }
 
 // MARK: - FavoritesInteractorInputProtocol
 
 extension FavoritesInteractor: FavoritesInteractorInputProtocol {
     func fetchFavorites() {
-        FavoritesManager.shared.fetchFavorites { [weak self] result in
-            switch result {
-            case .success(let items):
+        FavoritesManager.shared.fetchFavorites()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                if case .failure = completion {
+                    self?.presenter?.didFetchFavorites([])
+                }
+            } receiveValue: { [weak self] items in
                 self?.presenter?.didFetchFavorites(items)
-            case .failure(let error):
-                self?.presenter?.didFetchFavorites([])
-                print("[FavoritesInteractor] fetchFavorites error: \(error)")
             }
-        }
+            .store(in: &cancellables)
     }
 }

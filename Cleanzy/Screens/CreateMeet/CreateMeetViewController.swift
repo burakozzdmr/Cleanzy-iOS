@@ -27,7 +27,7 @@ final class CreateMeetViewController: UIViewController {
 
     private let contentStack: UIStackView = {
         let sv = UIStackView()
-        sv.axis = .vertical
+        sv.axis    = .vertical
         sv.spacing = 16
         return sv
     }()
@@ -36,25 +36,27 @@ final class CreateMeetViewController: UIViewController {
 
     private let addressCard: UIView = .init()
 
-    private lazy var addressTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Adresinizi girin (Mahalle, Cadde, No...)"
-        tf.font = .systemFont(ofSize: 14, weight: .regular)
-        tf.textColor = .black
-        tf.borderStyle = .none
-        tf.returnKeyType = .done
-        tf.delegate = self
-        tf.addTarget(self, action: #selector(addressDidChange), for: .editingChanged)
-        return tf
+    /// Seçilen adres metni için etiket
+    private let addressValueLabel: UILabel = {
+        let l = UILabel()
+        l.text          = "Konum seçmek için dokunun"
+        l.font          = .systemFont(ofSize: 14, weight: .regular)
+        l.textColor     = .systemGray
+        l.numberOfLines = 2
+        return l
+    }()
+
+    private let addressChevron: UIImageView = {
+        let iv = UIImageView(image: UIImage(systemName: "chevron.right"))
+        iv.tintColor   = .systemGray3
+        iv.contentMode = .scaleAspectFit
+        return iv
     }()
 
     // MARK: - Calendar Card
 
     private let calendarCard: UIView = .init()
-    private let calendarView: CalendarView = {
-        let cv = CalendarView()
-        return cv
-    }()
+    private let calendarView: CalendarView = .init()
 
     // MARK: - Time Slot Card
 
@@ -72,34 +74,56 @@ final class CreateMeetViewController: UIViewController {
     private let extrasCard: UIView = .init()
     private let extrasStackView: UIStackView = {
         let sv = UIStackView()
-        sv.axis = .vertical
+        sv.axis    = .vertical
         sv.spacing = 0
         return sv
     }()
+
+    // MARK: - Payment Card
+
+    private let paymentMethodCard: UIView = .init()
+
+    private let paymentMethodValueLabel: UILabel = {
+        let l = UILabel()
+        l.text      = "Kart seçmek için dokunun"
+        l.font      = .systemFont(ofSize: 14, weight: .regular)
+        l.textColor = .systemGray
+        return l
+    }()
+
+    private var savedCards: [PaymentCardItem] = {
+        // In-memory kartlar — backend hazır olunca service ile çekilecek
+        [
+            PaymentCardItem(holderName: "KART SAHİBİ", lastFour: "4242", expiryDate: "12/27", isDefault: true),
+            PaymentCardItem(holderName: "KART SAHİBİ", lastFour: "5353", expiryDate: "08/26")
+        ]
+    }()
+
+    private var selectedCardIndex: Int? = nil
 
     // MARK: - Bottom Bar
 
     private let bottomBar: UIView = {
         let v = UIView()
-        v.backgroundColor = .white
-        v.layer.shadowColor = UIColor.black.cgColor
+        v.backgroundColor    = .white
+        v.layer.shadowColor  = UIColor.black.cgColor
         v.layer.shadowOpacity = 0.08
-        v.layer.shadowOffset = CGSize(width: 0, height: -4)
-        v.layer.shadowRadius = 8
+        v.layer.shadowOffset  = CGSize(width: 0, height: -4)
+        v.layer.shadowRadius  = 8
         return v
     }()
 
     private let totalTitleLabel: UILabel = {
         let l = UILabel()
-        l.text = "TOPLAM TUTAR"
-        l.font = .systemFont(ofSize: 11, weight: .semibold)
+        l.text      = "TOPLAM TUTAR"
+        l.font      = .systemFont(ofSize: 11, weight: .semibold)
         l.textColor = .systemGray
         return l
     }()
 
     private let totalPriceLabel: UILabel = {
         let l = UILabel()
-        l.font = .systemFont(ofSize: 26, weight: .bold)
+        l.font      = .systemFont(ofSize: 26, weight: .bold)
         l.textColor = .black
         return l
     }()
@@ -107,8 +131,8 @@ final class CreateMeetViewController: UIViewController {
     private lazy var confirmButton: UIButton = {
         let b = UIButton()
         b.setTitle("Randevuyu Onayla", for: .normal)
-        b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-        b.backgroundColor = .accent
+        b.titleLabel?.font  = .systemFont(ofSize: 15, weight: .semibold)
+        b.backgroundColor   = .accent
         b.layer.cornerRadius = 14
         b.addTarget(self, action: #selector(confirmTapped), for: .touchUpInside)
         return b
@@ -132,14 +156,10 @@ final class CreateMeetViewController: UIViewController {
 // MARK: - Objective-C
 
 @objc private extension CreateMeetViewController {
-    func backTapped() {
-        presenter?.didTapBack()
-    }
-
-    func confirmTapped() {
-        view.endEditing(true)
-        presenter?.didTapConfirm()
-    }
+    func backTapped()           { presenter?.didTapBack() }
+    func confirmTapped()        { presenter?.didTapConfirm() }
+    func addressCardTapped()    { openLocationPicker() }
+    func paymentCardTapped()    { openPaymentSheet() }
 
     func houseSizeTapped(_ sender: UIButton) {
         let size = HouseSize.allCases[sender.tag]
@@ -148,8 +168,43 @@ final class CreateMeetViewController: UIViewController {
         presenter?.didSelectHouseSize(size)
     }
 
-    func addressDidChange(_ sender: UITextField) {
-        presenter?.didChangeAddress(sender.text ?? "")
+    func extraToggled(_ sender: UISwitch) {
+        presenter?.didToggleExtraService(at: sender.tag)
+    }
+}
+
+// MARK: - Payment Sheet
+
+private extension CreateMeetViewController {
+    func openPaymentSheet() {
+        let sheet = PaymentSelectionSheetViewController(cards: savedCards, selectedIndex: selectedCardIndex)
+        sheet.onCardSelected = { [weak self] card in
+            guard let self else { return }
+            self.selectedCardIndex = self.savedCards.firstIndex(where: { $0.id == card.id })
+            self.presenter?.didSelectPaymentCard(card)
+        }
+        if let sheet = sheet.sheetPresentationController {
+            sheet.detents          = [.medium()]
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 20
+        }
+        present(sheet, animated: true)
+    }
+}
+
+// MARK: - Location Picker
+
+private extension CreateMeetViewController {
+    func openLocationPicker() {
+        let picker = LocationPickerViewController()
+        picker.onLocationSelected = { [weak self] address in
+            self?.addressValueLabel.text      = address
+            self?.addressValueLabel.textColor = .label
+            self?.presenter?.didChangeAddress(address)
+        }
+        let nav = UINavigationController(rootViewController: picker)
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true)
     }
 }
 
@@ -177,13 +232,6 @@ private extension CreateMeetViewController {
         addViews()
         configureLayout()
         setupCalendarCallbacks()
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-    }
-
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
     }
 
     func addViews() {
@@ -195,8 +243,9 @@ private extension CreateMeetViewController {
         buildTimeCard()
         buildHouseSizeCard()
         buildExtrasCard()
+        buildPaymentMethodCard()
 
-        [addressCard, calendarCard, timeCard, houseSizeCard, extrasCard].forEach {
+        [addressCard, calendarCard, timeCard, houseSizeCard, extrasCard, paymentMethodCard].forEach {
             styleCard($0)
             contentStack.addArrangedSubview($0)
         }
@@ -205,23 +254,26 @@ private extension CreateMeetViewController {
     }
 
     func configureLayout() {
+        // Bottom bar — pinned to real screen bottom, content sits above safe area
         bottomBar.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(88)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-80)
         }
 
         scrollView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(bottomBar.snp.top)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-80)
         }
 
         contentStack.snp.makeConstraints {
-            $0.edges.equalTo(scrollView.contentLayoutGuide).inset(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16))
+            $0.edges.equalTo(scrollView.contentLayoutGuide).inset(
+                UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+            )
             $0.width.equalTo(scrollView.frameLayoutGuide).offset(-32)
         }
 
         totalTitleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(12)
+            $0.top.equalToSuperview().offset(14)
             $0.leading.equalToSuperview().offset(20)
         }
 
@@ -231,10 +283,10 @@ private extension CreateMeetViewController {
         }
 
         confirmButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
+            $0.top.equalToSuperview().offset(12)
             $0.trailing.equalToSuperview().inset(20)
-            $0.width.equalTo(170)
-            $0.height.equalTo(48)
+            $0.width.equalTo(165)
+            $0.height.equalTo(52)
         }
     }
 
@@ -244,37 +296,44 @@ private extension CreateMeetViewController {
         let sectionLabel = makeSectionLabel("Adres")
 
         let pinIcon = UIImageView(image: UIImage(systemName: "mappin.circle.fill"))
-        pinIcon.tintColor = .accent
+        pinIcon.tintColor   = .accent
         pinIcon.contentMode = .scaleAspectFit
 
-        let fieldContainer: UIView = {
-            let v = UIView()
-            v.backgroundColor = UIColor.systemGray6
-            v.layer.cornerRadius = 12
-            return v
-        }()
+        let tapArea = UIView()
+        tapArea.backgroundColor   = UIColor.systemGray6
+        tapArea.layer.cornerRadius = 12
+        let tap = UITapGestureRecognizer(target: self, action: #selector(addressCardTapped))
+        tapArea.addGestureRecognizer(tap)
+        tapArea.isUserInteractionEnabled = true
 
-        fieldContainer.addSubviews([pinIcon, addressTextField])
-        addressCard.addSubviews([sectionLabel, fieldContainer])
+        tapArea.addSubviews([pinIcon, addressValueLabel, addressChevron])
+        addressCard.addSubviews([sectionLabel, tapArea])
 
         sectionLabel.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview().inset(16)
         }
-        fieldContainer.snp.makeConstraints {
+        tapArea.snp.makeConstraints {
             $0.top.equalTo(sectionLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(16)
-            $0.height.equalTo(52)
+            $0.height.greaterThanOrEqualTo(52)
         }
         pinIcon.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(14)
             $0.centerY.equalToSuperview()
             $0.width.height.equalTo(22)
         }
-        addressTextField.snp.makeConstraints {
-            $0.leading.equalTo(pinIcon.snp.trailing).offset(10)
+        addressChevron.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(14)
-            $0.top.bottom.equalToSuperview()
+            $0.centerY.equalToSuperview()
+            $0.width.equalTo(8)
+            $0.height.equalTo(14)
+        }
+        addressValueLabel.snp.makeConstraints {
+            $0.leading.equalTo(pinIcon.snp.trailing).offset(10)
+            $0.trailing.equalTo(addressChevron.snp.leading).offset(-8)
+            $0.top.equalToSuperview().offset(14)
+            $0.bottom.equalToSuperview().inset(14)
         }
     }
 
@@ -309,16 +368,16 @@ private extension CreateMeetViewController {
     func buildHouseSizeCard() {
         let titleLabel = makeSectionLabel("Evin Büyüklüğü")
         let sizeStack = UIStackView()
-        sizeStack.axis = .horizontal
-        sizeStack.spacing = 12
+        sizeStack.axis         = .horizontal
+        sizeStack.spacing      = 12
         sizeStack.distribution = .fillEqually
 
         HouseSize.allCases.enumerated().forEach { index, size in
             let btn = UIButton()
             btn.setTitle(size.rawValue, for: .normal)
-            btn.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+            btn.titleLabel?.font  = .systemFont(ofSize: 16, weight: .semibold)
             btn.layer.cornerRadius = 12
-            btn.layer.borderWidth = 1.5
+            btn.layer.borderWidth  = 1.5
             btn.tag = index
             btn.addTarget(self, action: #selector(houseSizeTapped(_:)), for: .touchUpInside)
             sizeStack.addArrangedSubview(btn)
@@ -351,6 +410,54 @@ private extension CreateMeetViewController {
         }
     }
 
+    func buildPaymentMethodCard() {
+        let sectionLabel = makeSectionLabel("Ödeme Yöntemi")
+
+        let cardIcon = UIImageView(image: UIImage(systemName: "creditcard.fill"))
+        cardIcon.tintColor   = .accent
+        cardIcon.contentMode = .scaleAspectFit
+
+        let chevron = UIImageView(image: UIImage(systemName: "chevron.right"))
+        chevron.tintColor   = .systemGray3
+        chevron.contentMode = .scaleAspectFit
+
+        let tapArea = UIView()
+        tapArea.backgroundColor    = UIColor.systemGray6
+        tapArea.layer.cornerRadius = 12
+        let tap = UITapGestureRecognizer(target: self, action: #selector(paymentCardTapped))
+        tapArea.addGestureRecognizer(tap)
+        tapArea.isUserInteractionEnabled = true
+
+        tapArea.addSubviews([cardIcon, paymentMethodValueLabel, chevron])
+        paymentMethodCard.addSubviews([sectionLabel, tapArea])
+
+        sectionLabel.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview().inset(16)
+        }
+        tapArea.snp.makeConstraints {
+            $0.top.equalTo(sectionLabel.snp.bottom).offset(10)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(16)
+            $0.height.equalTo(52)
+        }
+        cardIcon.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(14)
+            $0.centerY.equalToSuperview()
+            $0.width.height.equalTo(22)
+        }
+        chevron.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(14)
+            $0.centerY.equalToSuperview()
+            $0.width.equalTo(8)
+            $0.height.equalTo(14)
+        }
+        paymentMethodValueLabel.snp.makeConstraints {
+            $0.leading.equalTo(cardIcon.snp.trailing).offset(10)
+            $0.trailing.equalTo(chevron.snp.leading).offset(-8)
+            $0.centerY.equalToSuperview()
+        }
+    }
+
     // MARK: - Calendar Callbacks
 
     func setupCalendarCallbacks() {
@@ -367,7 +474,6 @@ private extension CreateMeetViewController {
     func applyHouseSizeSelection() {
         houseSizeButtons.enumerated().forEach { index, btn in
             let isSelected = HouseSize.allCases[index] == selectedHouseSize
-            btn.backgroundColor = isSelected ? .clear : .clear
             btn.layer.borderColor = isSelected ? UIColor.accent.cgColor : UIColor.systemGray3.cgColor
             btn.setTitleColor(isSelected ? .accent : .systemGray, for: .normal)
         }
@@ -376,18 +482,18 @@ private extension CreateMeetViewController {
     // MARK: - Factory Helpers
 
     func styleCard(_ card: UIView) {
-        card.backgroundColor = .white
-        card.layer.cornerRadius = 16
-        card.layer.shadowColor = UIColor.black.cgColor
+        card.backgroundColor    = .white
+        card.layer.cornerRadius  = 16
+        card.layer.shadowColor   = UIColor.black.cgColor
         card.layer.shadowOpacity = 0.05
-        card.layer.shadowOffset = CGSize(width: 0, height: 4)
-        card.layer.shadowRadius = 8
+        card.layer.shadowOffset  = CGSize(width: 0, height: 4)
+        card.layer.shadowRadius  = 8
     }
 
     func makeSectionLabel(_ text: String) -> UILabel {
         let l = UILabel()
-        l.text = text.uppercased()
-        l.font = .systemFont(ofSize: 11, weight: .bold)
+        l.text      = text.uppercased()
+        l.font      = .systemFont(ofSize: 11, weight: .bold)
         l.textColor = .systemGray
         l.letterSpacing(1.2)
         return l
@@ -397,27 +503,27 @@ private extension CreateMeetViewController {
         let container = UIView()
 
         let iconView = UIImageView(image: UIImage(systemName: item.icon))
-        iconView.tintColor = .accent
+        iconView.tintColor   = .accent
         iconView.contentMode = .scaleAspectFit
 
         let titleLabel = UILabel()
-        titleLabel.text = item.title
-        titleLabel.font = .systemFont(ofSize: 15, weight: .semibold)
+        titleLabel.text  = item.title
+        titleLabel.font  = .systemFont(ofSize: 15, weight: .semibold)
         titleLabel.textColor = .black
 
         let priceLabel = UILabel()
-        priceLabel.text = "+\(item.price) TL"
-        priceLabel.font = .systemFont(ofSize: 13, weight: .regular)
+        priceLabel.text  = "+\(item.price) TL"
+        priceLabel.font  = .systemFont(ofSize: 13, weight: .regular)
         priceLabel.textColor = .systemGray
 
         let textStack = UIStackView(arrangedSubviews: [titleLabel, priceLabel])
-        textStack.axis = .vertical
+        textStack.axis    = .vertical
         textStack.spacing = 2
 
         let toggle = UISwitch()
         toggle.onTintColor = .accent
-        toggle.isOn = item.isEnabled
-        toggle.tag = index
+        toggle.isOn        = item.isEnabled
+        toggle.tag         = index
         toggle.addTarget(self, action: #selector(extraToggled(_:)), for: .valueChanged)
 
         let separator = UIView()
@@ -446,28 +552,10 @@ private extension CreateMeetViewController {
         container.snp.makeConstraints { $0.height.equalTo(68) }
 
         if item.isEnabled {
-            container.backgroundColor = UIColor.accent.withAlphaComponent(0.04)
+            container.backgroundColor    = UIColor.accent.withAlphaComponent(0.04)
             container.layer.cornerRadius = 12
         }
-
         return container
-    }
-}
-
-// MARK: - Extra Service Toggle
-
-@objc private extension CreateMeetViewController {
-    func extraToggled(_ sender: UISwitch) {
-        presenter?.didToggleExtraService(at: sender.tag)
-    }
-}
-
-// MARK: - UITextFieldDelegate
-
-extension CreateMeetViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
     }
 }
 
@@ -476,6 +564,11 @@ extension CreateMeetViewController: UITextFieldDelegate {
 extension CreateMeetViewController: CreateMeetViewProtocol {
     func updateTotalPrice(_ formatted: String) {
         totalPriceLabel.text = formatted
+    }
+
+    func updatePaymentCard(label: String) {
+        paymentMethodValueLabel.text      = label
+        paymentMethodValueLabel.textColor = .label
     }
 
     func reloadExtraServices(_ items: [ExtraServiceItem]) {
@@ -490,9 +583,7 @@ extension CreateMeetViewController: CreateMeetViewProtocol {
         loadingView.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
 
-    func hideLoading() {
-        loadingView.removeFromSuperview()
-    }
+    func hideLoading() { loadingView.removeFromSuperview() }
 
     func showAlert(with alertModel: AlertModel) {
         AlertManager.shared.showAlert(
@@ -502,7 +593,7 @@ extension CreateMeetViewController: CreateMeetViewProtocol {
     }
 }
 
-// MARK: - UILabel extension (letter spacing)
+// MARK: - UILabel letterSpacing
 
 private extension UILabel {
     func letterSpacing(_ value: CGFloat) {

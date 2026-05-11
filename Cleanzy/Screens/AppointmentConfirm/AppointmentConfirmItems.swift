@@ -13,8 +13,20 @@ struct AppointmentConfirmItem {
     let serviceSummary: String
     let formattedDate: String
     let timeSlot: String
+    let address: String
+    let totalAmount: String
+    let paymentCard: String
+    let cleanerName: String
 
-    static func build(houseSize: HouseSize, date: Date?, timeSlot: String?) -> AppointmentConfirmItem {
+    static func build(
+        houseSize: HouseSize,
+        date: Date?,
+        timeSlot: String?,
+        address: String = "",
+        totalAmount: String = "",
+        paymentCard: String = "Nakit",
+        cleanerName: String = ""
+    ) -> AppointmentConfirmItem {
         let serviceSummary = "\(houseSize.rawValue) Ev Temizliği"
 
         let formattedDate: String
@@ -30,7 +42,11 @@ struct AppointmentConfirmItem {
         return AppointmentConfirmItem(
             serviceSummary: serviceSummary,
             formattedDate: formattedDate,
-            timeSlot: timeSlot ?? "-"
+            timeSlot: timeSlot ?? "-",
+            address: address.isEmpty ? "-" : address,
+            totalAmount: totalAmount.isEmpty ? "-" : totalAmount,
+            paymentCard: paymentCard,
+            cleanerName: cleanerName.isEmpty ? "-" : cleanerName
         )
     }
 }

@@ -14,9 +14,9 @@ final class CreateMeetBuilder { }
 // MARK: - CreateMeetBuilderProtocol
 
 extension CreateMeetBuilder: CreateMeetBuilderProtocol {
-    static func createModule(cleanerID: Int, hourlyRate: Double) -> CreateMeetViewController {
+    static func createModule(cleanerID: Int, hourlyRate: Double, cleanerName: String = "") -> CreateMeetViewController {
         let view = CreateMeetViewController()
-        let presenter = CreateMeetPresenter(cleanerID: cleanerID, hourlyRate: hourlyRate)
+        let presenter = CreateMeetPresenter(cleanerID: cleanerID, hourlyRate: hourlyRate, cleanerName: cleanerName)
         let interactor = CreateMeetInteractor()
         let router = CreateMeetRouter()
 

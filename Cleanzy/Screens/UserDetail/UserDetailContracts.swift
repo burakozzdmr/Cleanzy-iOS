@@ -51,7 +51,7 @@ protocol UserDetailRouterProtocol: BaseRouterProtocol, AnyObject {
     var presenter: UserDetailPresenterProtocol? { get set }
 
     func navigateBack()
-    func navigateToCreateMeet(cleanerID: Int, hourlyRate: Double)
+    func navigateToCreateMeet(cleanerID: Int, hourlyRate: Double, cleanerName: String)
 }
 
 // MARK: - UserDetailBuilderProtocol
