@@ -10,7 +10,14 @@ import Foundation
 // MARK: - GetAllJobsRequestModel
 
 struct GetAllJobsRequestModel: BaseRequest {
-    var path: String { NetworkConstants.Endpoints.jobsPath + "/" }
+    var path: String { NetworkConstants.Endpoints.jobsPath }
+    var method: HTTPMethod { .GET }
+}
+
+// MARK: - GetMyJobsRequestModel
+
+struct GetMyJobsRequestModel: BaseRequest {
+    var path: String { NetworkConstants.Endpoints.jobsPath + "/my" }
     var method: HTTPMethod { .GET }
 }
 
@@ -26,32 +33,65 @@ struct GetJobByIDRequestModel: BaseRequest {
 // MARK: - AddJobRequestModel
 
 struct AddJobRequestModel: BaseRequest {
-    var path: String { NetworkConstants.Endpoints.jobsPath + "/" }
+    var path: String { NetworkConstants.Endpoints.jobsPath }
     var method: HTTPMethod { .POST }
 
-    // JobRequestDTO is currently an empty schema on the backend.
-    // Add fields here as the backend schema evolves.
-    var body: Data? { try? JSONEncoder().encode(EmptyBody()) }
+    let cleanerID: Int
+    let customerID: Int
+    let address: String
+    let scheduledDate: String   // "yyyy-MM-dd"
+    let scheduledTime: String   // "HH:mm"
+    let houseSize: String       // "SMALL" | "MEDIUM" | "LARGE" | "ULTRA_LARGE"
+    let extraServices: [String] // e.g. ["WINDOW_CLEANING"]
 
-    private struct EmptyBody: Encodable {}
+    var body: Data? {
+        try? JSONEncoder().encode(
+            JobBody(
+                cleanerID: cleanerID,
+                customerID: customerID,
+                address: address,
+                scheduledDate: scheduledDate,
+                scheduledTime: scheduledTime,
+                houseSize: houseSize,
+                extraServices: extraServices
+            )
+        )
+    }
+
+    private struct JobBody: Encodable {
+        let cleanerID: Int
+        let customerID: Int
+        let address: String
+        let scheduledDate: String
+        let scheduledTime: String
+        let houseSize: String
+        let extraServices: [String]
+    }
 }
 
-// MARK: - UpdateJobRequestModel
+// MARK: - UpdateJobStatusRequestModel
 
-struct UpdateJobRequestModel: BaseRequest {
-    var path: String { NetworkConstants.Endpoints.jobsPath + "/" }
+struct UpdateJobStatusRequestModel: BaseRequest {
+    var path: String { NetworkConstants.Endpoints.jobsPath + "/\(jobID)/status" }
     var method: HTTPMethod { .PATCH }
 
-    // JobRequestDTO is currently an empty schema on the backend.
-    // Add fields here as the backend schema evolves.
-    var body: Data? { try? JSONEncoder().encode(EmptyBody()) }
+    let jobID: Int
+    let status: String
 
-    private struct EmptyBody: Encodable {}
+    var body: Data? {
+        try? JSONEncoder().encode(StatusBody(status: status))
+    }
+
+    private struct StatusBody: Encodable {
+        let status: String
+    }
 }
 
 // MARK: - DeleteJobRequestModel
 
 struct DeleteJobRequestModel: BaseRequest {
-    var path: String { NetworkConstants.Endpoints.jobsPath + "/" }
+    var path: String { NetworkConstants.Endpoints.jobsPath + "/\(jobID)" }
     var method: HTTPMethod { .DELETE }
+
+    let jobID: Int
 }

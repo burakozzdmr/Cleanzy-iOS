@@ -35,14 +35,59 @@ struct RegisterRequestModel: BaseRequest {
     let fullName: String
     let email: String
     let password: String
+    let role: String
 
     var body: Data? {
-        try? JSONEncoder().encode(RegisterBody(fullName: fullName, email: email, password: password))
+        try? JSONEncoder().encode(RegisterBody(fullName: fullName, email: email, password: password, role: role))
     }
 
     private struct RegisterBody: Encodable {
         let fullName: String
         let email: String
         let password: String
+        let role: String
+    }
+}
+
+// MARK: - LogoutRequestModel
+
+struct LogoutRequestModel: BaseRequest {
+    var path: String { NetworkConstants.Endpoints.authPath + "/logout" }
+    var method: HTTPMethod { .POST }
+}
+
+// MARK: - RefreshTokenRequestModel
+
+struct RefreshTokenRequestModel: BaseRequest {
+    var path: String { NetworkConstants.Endpoints.authPath + "/refresh" }
+    var method: HTTPMethod { .POST }
+
+    let token: String
+
+    var body: Data? {
+        try? JSONEncoder().encode(RefreshBody(token: token))
+    }
+
+    private struct RefreshBody: Encodable {
+        let token: String
+    }
+}
+
+// MARK: - ChangePasswordRequestModel
+
+struct ChangePasswordRequestModel: BaseRequest {
+    var path: String { NetworkConstants.Endpoints.authPath + "/change-password" }
+    var method: HTTPMethod { .PATCH }
+
+    let currentPassword: String
+    let newPassword: String
+
+    var body: Data? {
+        try? JSONEncoder().encode(ChangePasswordBody(currentPassword: currentPassword, newPassword: newPassword))
+    }
+
+    private struct ChangePasswordBody: Encodable {
+        let currentPassword: String
+        let newPassword: String
     }
 }

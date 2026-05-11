@@ -12,6 +12,7 @@ import Foundation
 
 protocol ProfileServiceProtocol {
     func getProfile(request: GetProfileRequestModel) -> AnyPublisher<ProfileSuccessResponse, NetworkError>
+    func updateProfile(request: UpdateProfileRequestModel) -> AnyPublisher<ProfileSuccessResponse, NetworkError>
 }
 
 // MARK: - ProfileService
@@ -28,6 +29,10 @@ final class ProfileService: ProfileServiceProtocol {
 
 extension ProfileService {
     func getProfile(request: GetProfileRequestModel) -> AnyPublisher<ProfileSuccessResponse, NetworkError> {
+        networkManager.executeRequest(with: request, as: ProfileSuccessResponse.self)
+    }
+
+    func updateProfile(request: UpdateProfileRequestModel) -> AnyPublisher<ProfileSuccessResponse, NetworkError> {
         networkManager.executeRequest(with: request, as: ProfileSuccessResponse.self)
     }
 }

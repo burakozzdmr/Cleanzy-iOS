@@ -12,9 +12,10 @@ import Foundation
 
 protocol JobsServiceProtocol {
     func getAllJobs(request: GetAllJobsRequestModel) -> AnyPublisher<JobListSuccessResponse, NetworkError>
+    func getMyJobs(request: GetMyJobsRequestModel) -> AnyPublisher<JobListSuccessResponse, NetworkError>
     func getJobByID(request: GetJobByIDRequestModel) -> AnyPublisher<JobSuccessResponse, NetworkError>
     func addJob(request: AddJobRequestModel) -> AnyPublisher<JobSuccessResponse, NetworkError>
-    func updateJob(request: UpdateJobRequestModel) -> AnyPublisher<JobSuccessResponse, NetworkError>
+    func updateJobStatus(request: UpdateJobStatusRequestModel) -> AnyPublisher<JobSuccessResponse, NetworkError>
     func deleteJob(request: DeleteJobRequestModel) -> AnyPublisher<JobSuccessResponse, NetworkError>
 }
 
@@ -35,6 +36,10 @@ extension JobsService {
         networkManager.executeRequest(with: request, as: JobListSuccessResponse.self)
     }
 
+    func getMyJobs(request: GetMyJobsRequestModel) -> AnyPublisher<JobListSuccessResponse, NetworkError> {
+        networkManager.executeRequest(with: request, as: JobListSuccessResponse.self)
+    }
+
     func getJobByID(request: GetJobByIDRequestModel) -> AnyPublisher<JobSuccessResponse, NetworkError> {
         networkManager.executeRequest(with: request, as: JobSuccessResponse.self)
     }
@@ -43,7 +48,7 @@ extension JobsService {
         networkManager.executeRequest(with: request, as: JobSuccessResponse.self)
     }
 
-    func updateJob(request: UpdateJobRequestModel) -> AnyPublisher<JobSuccessResponse, NetworkError> {
+    func updateJobStatus(request: UpdateJobStatusRequestModel) -> AnyPublisher<JobSuccessResponse, NetworkError> {
         networkManager.executeRequest(with: request, as: JobSuccessResponse.self)
     }
 
