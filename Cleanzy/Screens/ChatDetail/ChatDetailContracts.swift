@@ -24,6 +24,8 @@ protocol ChatDetailInteractorInputProtocol: BaseInteractorInputProtocol, AnyObje
 
     func fetchMessages(for chatItem: ChatItem)
     func sendMessage(_ text: String)
+    func connectWebSocket()
+    func disconnectWebSocket()
 }
 
 // MARK: - ChatDetailInteractorOutputProtocol
@@ -31,6 +33,7 @@ protocol ChatDetailInteractorInputProtocol: BaseInteractorInputProtocol, AnyObje
 protocol ChatDetailInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyObject {
     func didFetchMessages(_ messages: [ChatMessageItem])
     func didSendMessage(_ message: ChatMessageItem)
+    func didReceiveMessage(_ message: ChatMessageItem)
 }
 
 // MARK: - ChatDetailPresenterProtocol

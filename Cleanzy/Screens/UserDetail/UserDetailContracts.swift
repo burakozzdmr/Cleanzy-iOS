@@ -24,6 +24,7 @@ protocol UserDetailInteractorInputProtocol: BaseInteractorInputProtocol, AnyObje
 
     func fetchCleanerDetail(cleanerID: Int)
     func fetchReviews(cleanerID: Int)
+    func createOrGetConversation(participantUserID: Int)
 }
 
 // MARK: - UserDetailInteractorOutputProtocol
@@ -32,6 +33,8 @@ protocol UserDetailInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyOb
     func didFetchCleanerDetail(_ cleaner: CleanerResponseModel)
     func didFetchReviews(_ reviews: [UserDetailReviewItem])
     func didFailFetchingDetail(with message: String)
+    func didCreateOrGetConversation(_ conversation: ConversationResponseModel)
+    func didFailCreatingConversation(with message: String)
 }
 
 // MARK: - UserDetailPresenterProtocol
@@ -43,6 +46,7 @@ protocol UserDetailPresenterProtocol: BasePresenterProtocol, AnyObject {
 
     func didTapCreateMeet()
     func didTapFavorite()
+    func didTapChat()
 }
 
 // MARK: - UserDetailRouterProtocol
@@ -52,6 +56,7 @@ protocol UserDetailRouterProtocol: BaseRouterProtocol, AnyObject {
 
     func navigateBack()
     func navigateToCreateMeet(cleanerID: Int, hourlyRate: Double, cleanerName: String)
+    func navigateToChat(with chatItem: ChatItem)
 }
 
 // MARK: - UserDetailBuilderProtocol

@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		08101EBD2FA754740076A7E8 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 08101EBC2FA754740076A7E8 /* Lottie */; };
-		08101EC02FA7548F0076A7E8 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 08101EBF2FA7548F0076A7E8 /* SnapKit */; };
+		CL00000000000000000000B1 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = CL00000000000000000000P1 /* Alamofire */; };
+		CL00000000000000000000B2 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = CL00000000000000000000P2 /* Lottie */; };
+		CL00000000000000000000B3 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = CL00000000000000000000P3 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,8 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				08101EBD2FA754740076A7E8 /* Lottie in Frameworks */,
-				08101EC02FA7548F0076A7E8 /* SnapKit in Frameworks */,
+				CL00000000000000000000B1 /* Alamofire in Frameworks */,
+				CL00000000000000000000B2 /* Lottie in Frameworks */,
+				CL00000000000000000000B3 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,8 +87,9 @@
 			);
 			name = Cleanzy;
 			packageProductDependencies = (
-				08101EBC2FA754740076A7E8 /* Lottie */,
-				08101EBF2FA7548F0076A7E8 /* SnapKit */,
+				CL00000000000000000000P1 /* Alamofire */,
+				CL00000000000000000000P2 /* Lottie */,
+				CL00000000000000000000P3 /* SnapKit */,
 			);
 			productName = Cleanzy;
 			productReference = 08D3DD5C2EBE265D0065AAD4 /* Cleanzy.app */;
@@ -117,8 +120,9 @@
 			mainGroup = 08D3DD532EBE265D0065AAD4;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				08101EBB2FA754740076A7E8 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				08101EBE2FA7548F0076A7E8 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				CL00000000000000000000R1 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				CL00000000000000000000R2 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				CL00000000000000000000R3 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 08D3DD5D2EBE265D0065AAD4 /* Products */;
@@ -374,7 +378,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		08101EBB2FA754740076A7E8 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+		CL00000000000000000000R1 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.11.2;
+			};
+		};
+		CL00000000000000000000R2 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
 			requirement = {
@@ -382,7 +394,7 @@
 				minimumVersion = 4.6.0;
 			};
 		};
-		08101EBE2FA7548F0076A7E8 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+		CL00000000000000000000R3 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
 			requirement = {
@@ -393,14 +405,19 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		08101EBC2FA754740076A7E8 /* Lottie */ = {
+		CL00000000000000000000P1 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 08101EBB2FA754740076A7E8 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			package = CL00000000000000000000R1 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		CL00000000000000000000P2 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CL00000000000000000000R2 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
 		};
-		08101EBF2FA7548F0076A7E8 /* SnapKit */ = {
+		CL00000000000000000000P3 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 08101EBE2FA7548F0076A7E8 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			package = CL00000000000000000000R3 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */

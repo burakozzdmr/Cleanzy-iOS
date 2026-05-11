@@ -28,6 +28,7 @@ extension ChatDetailPresenter: ChatDetailPresenterProtocol {
         let status = chatItem.isOnline ? "Çevrimiçi · Yanıt süresi: 5 dk" : "Çevrimdışı"
         view?.configureHeader(userName: chatItem.userName, status: status, isOnline: chatItem.isOnline)
         interactor?.fetchMessages(for: chatItem)
+        interactor?.connectWebSocket()
     }
 
     func didTapSend(text: String) {
@@ -37,6 +38,7 @@ extension ChatDetailPresenter: ChatDetailPresenterProtocol {
     }
 
     func didTapBack() {
+        interactor?.disconnectWebSocket()
         router?.navigateBack()
     }
 }
@@ -49,6 +51,10 @@ extension ChatDetailPresenter: ChatDetailInteractorOutputProtocol {
     }
 
     func didSendMessage(_ message: ChatMessageItem) {
+        view?.appendMessage(message)
+    }
+
+    func didReceiveMessage(_ message: ChatMessageItem) {
         view?.appendMessage(message)
     }
 }

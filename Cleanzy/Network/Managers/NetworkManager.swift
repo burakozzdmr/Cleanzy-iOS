@@ -8,6 +8,17 @@
 import Combine
 import Foundation
 
+// MARK: - Backend error response shape
+// { "success": false, "errorDetails": { "errorCode": "...", "errorMessage": "..." } }
+
+private struct BackendErrorResponse: Decodable {
+    struct Details: Decodable {
+        let errorCode: String?
+        let errorMessage: String?
+    }
+    let errorDetails: Details?
+}
+
 // MARK: - NetworkManagerProtocol
 
 protocol NetworkManagerProtocol {
@@ -49,6 +60,12 @@ extension NetworkManager: NetworkManagerProtocol {
                     }
 
                     guard (200...299).contains(httpResponse.statusCode) else {
+                        // Backend'den gelen hata body'sini parse et
+                        if let backend = try? JSONDecoder().decode(BackendErrorResponse.self, from: data),
+                           let code = backend.errorDetails?.errorCode,
+                           let apiError = APIError(rawValue: code) {
+                            throw NetworkError.apiError(apiError)
+                        }
                         throw NetworkError.from(statusCode: httpResponse.statusCode)
                     }
 

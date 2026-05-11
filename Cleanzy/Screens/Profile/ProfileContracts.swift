@@ -51,6 +51,7 @@ protocol ProfileRouterProtocol: BaseRouterProtocol, AnyObject {
 
     func navigateToLogin()
     func navigateToEditProfile()
+    func navigateToMyAppointments()
     func navigateToPaymentMethods()
 }
 

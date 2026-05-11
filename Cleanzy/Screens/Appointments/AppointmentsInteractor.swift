@@ -22,7 +22,16 @@ final class AppointmentsInteractor {
 
 extension AppointmentsInteractor: AppointmentsInteractorInputProtocol {
     func fetchMyAppointments() {
-        jobsService.getMyJobs(request: GetMyJobsRequestModel())
+        guard
+            let userId = KeychainManager.shared.userId,
+            let role   = KeychainManager.shared.userRole
+        else {
+            presenter?.didFailFetchingAppointments(with: "Oturum bilgisi bulunamadı. Lütfen tekrar giriş yapın.")
+            return
+        }
+
+        let request = GetMyJobsRequestModel(userId: userId, role: role)
+        jobsService.getMyJobs(request: request)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 if case .failure(let error) = completion {

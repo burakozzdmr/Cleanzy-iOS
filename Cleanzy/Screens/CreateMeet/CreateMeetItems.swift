@@ -17,10 +17,20 @@ enum HouseSize: String, CaseIterable {
 
     var priceMultiplier: Double {
         switch self {
-        case .small:  return 1.0
-        case .medium: return 1.3
-        case .large:  return 1.6
+        case .small:      return 1.0
+        case .medium:     return 1.3
+        case .large:      return 1.6
         case .ultraLarge: return 1.9
+        }
+    }
+
+    /// Matches the backend HouseSizeType enum values exactly.
+    var backendValue: String {
+        switch self {
+        case .small:      return "SMALL"
+        case .medium:     return "MEDIUM"
+        case .large:      return "LARGE"
+        case .ultraLarge: return "EXTRA_LARGE"
         }
     }
 }

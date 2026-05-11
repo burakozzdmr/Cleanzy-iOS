@@ -104,7 +104,7 @@ extension CreateMeetPresenter: CreateMeetPresenterProtocol {
             address: address,
             scheduledDate: scheduledDate,
             scheduledTime: scheduledTime,
-            houseSize: selectedHouseSize.rawValue.uppercased().replacingOccurrences(of: "+", with: "_"),
+            houseSize: selectedHouseSize.backendValue,
             extraServices: enabledExtras
         )
 

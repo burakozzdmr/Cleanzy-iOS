@@ -26,4 +26,10 @@ extension UserDetailRouter: UserDetailRouterProtocol {
         let target = CreateMeetBuilder.createModule(cleanerID: cleanerID, hourlyRate: hourlyRate, cleanerName: cleanerName)
         push(currentViewController: currentView, targetViewController: target, animated: true)
     }
+
+    func navigateToChat(with chatItem: ChatItem) {
+        guard let currentView = presenter?.view else { return }
+        let chatDetailVC = ChatDetailBuilder.createModule(with: chatItem)
+        push(currentViewController: currentView, targetViewController: chatDetailVC, animated: true)
+    }
 }

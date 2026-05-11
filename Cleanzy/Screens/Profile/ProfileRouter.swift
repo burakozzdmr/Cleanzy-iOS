@@ -29,6 +29,11 @@ extension ProfileRouter: ProfileRouterProtocol {
         viewController?.navigationController?.pushViewController(editVC, animated: true)
     }
 
+    func navigateToMyAppointments() {
+        let appointmentsVC = AppointmentsBuilder.createModule()
+        viewController?.navigationController?.pushViewController(appointmentsVC, animated: true)
+    }
+
     func navigateToPaymentMethods() {
         let payVC = PaymentMethodsBuilder.createModule()
         viewController?.navigationController?.pushViewController(payVC, animated: true)
