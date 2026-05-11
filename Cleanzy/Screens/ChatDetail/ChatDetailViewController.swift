@@ -353,7 +353,3 @@ extension ChatDetailViewController: UITableViewDelegate {
     }
 }
 
-#Preview {
-    let mockItem = ChatItem.mockList[0]
-    return ChatDetailBuilder.createModule(with: mockItem)
-}
