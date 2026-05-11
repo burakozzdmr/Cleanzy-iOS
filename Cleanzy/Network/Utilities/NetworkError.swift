@@ -72,7 +72,7 @@ enum NetworkError: Error {
     }
 }
 
-enum APIError: Error {
+enum APIError: String, Error {
     case AUTHENTICATION_ERROR
     case USER_NOT_FOUND
     case AUTHORIZATION_FOUND
