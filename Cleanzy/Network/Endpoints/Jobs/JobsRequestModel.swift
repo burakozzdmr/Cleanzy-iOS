@@ -17,7 +17,12 @@ struct GetAllJobsRequestModel: BaseRequest {
 // MARK: - GetMyJobsRequestModel
 
 struct GetMyJobsRequestModel: BaseRequest {
-    var path: String { NetworkConstants.Endpoints.jobsPath + "/my" }
+    let userId: Int
+    let role: String
+
+    var path: String {
+        "\(NetworkConstants.Endpoints.jobsPath)/my?userId=\(userId)&role=\(role)"
+    }
     var method: HTTPMethod { .GET }
 }
 

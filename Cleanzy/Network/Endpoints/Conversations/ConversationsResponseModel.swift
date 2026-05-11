@@ -9,23 +9,33 @@ import Foundation
 
 struct ConversationResponseModel: Codable {
     let id: Int?
-    let participantName: String?
-    let participantPhotoURL: String?
+    // Backend fields (ConversationResponseDTO)
+    let otherUserId: Int?
+    let otherUserName: String?
+    let otherUserPhotoURL: String?
+    let otherUserIsOnline: Bool?
     let lastMessage: String?
-    let lastMessageTime: String?
+    let lastMessageAt: String?
     let unreadCount: Int?
-    let isOnline: Bool?
+    // Legacy aliases kept for backward compatibility
+    var participantName: String? { otherUserName }
+    var participantPhotoURL: String? { otherUserPhotoURL }
+    var lastMessageTime: String? { lastMessageAt }
+    var isOnline: Bool? { otherUserIsOnline }
 }
 
 // MARK: - MessageResponseModel
 
 struct MessageResponseModel: Codable {
     let id: Int?
-    let senderUserId: Int?
+    let conversationId: Int?
+    let senderId: Int?
     let senderName: String?
+    let senderPhotoURL: String?
     let content: String?
     let sentAt: String?
     let isRead: Bool?
+    let isMine: Bool?
 }
 
 // MARK: - Type Aliases
