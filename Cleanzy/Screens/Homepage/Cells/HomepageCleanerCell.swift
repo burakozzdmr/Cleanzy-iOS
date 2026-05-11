@@ -108,6 +108,13 @@ extension HomepageCleanerCell {
         reviewCountLabel.text = "(\(item.totalReviews) Değerlendirme)"
         hourlyRateLabel.text = "₺\(Int(item.hourlyRate))/saat"
     }
+
+    func configure(with item: FavoriteItem) {
+        nameLabel.text = item.fullName
+        ratingLabel.text = String(format: "%.1f", item.rating)
+        reviewCountLabel.text = "(\(item.totalReviews) Değerlendirme)"
+        hourlyRateLabel.text = "₺\(Int(item.hourlyRate))/saat"
+    }
 }
 
 // MARK: - Private Setup
