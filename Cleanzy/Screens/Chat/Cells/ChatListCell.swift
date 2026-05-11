@@ -8,118 +8,184 @@
 import SnapKit
 import UIKit
 
-class ChatListCell: UITableViewCell {
+final class ChatListCell: UITableViewCell {
+    static let reuseIdentifier = "ChatListCell"
 
-    // MARK: - Properties
-    
-    private let userPhotoImageView: UIImageView = {
-        let imageView: UIImageView = .init()
-        imageView.image = .init(systemName: "person.fill")
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 32
-        return imageView
+    // MARK: - Avatar
+
+    private let avatarContainer: UIView = {
+        let v = UIView()
+        return v
     }()
-    
-    private let userNameLabel: UILabel = {
-        let label: UILabel = .init()
-        label.text = ""
-        label.textColor = .black
-        label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.numberOfLines = 1
-        return label
+
+    private let avatarImageView: UIImageView = {
+        let iv = UIImageView()
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        iv.layer.cornerRadius = 28
+        iv.backgroundColor = UIColor.accent.withAlphaComponent(0.15)
+        iv.image = UIImage(systemName: "person.fill")
+        iv.tintColor = .accent
+        return iv
     }()
-    
+
+    private let initialsLabel: UILabel = {
+        let l = UILabel()
+        l.font = .systemFont(ofSize: 16, weight: .bold)
+        l.textColor = .accent
+        l.textAlignment = .center
+        l.isHidden = true
+        return l
+    }()
+
+    private let onlineDot: UIView = {
+        let v = UIView()
+        v.backgroundColor = UIColor(red: 0.18, green: 0.80, blue: 0.44, alpha: 1.0)
+        v.layer.cornerRadius = 6
+        v.layer.borderWidth = 2
+        v.layer.borderColor = UIColor.white.cgColor
+        v.isHidden = true
+        return v
+    }()
+
+    // MARK: - Content
+
+    private let nameLabel: UILabel = {
+        let l = UILabel()
+        l.font = .systemFont(ofSize: 16, weight: .semibold)
+        l.textColor = UIColor(red: 0.08, green: 0.10, blue: 0.15, alpha: 1.0)
+        l.numberOfLines = 1
+        return l
+    }()
+
     private let lastMessageLabel: UILabel = {
-        let label: UILabel = .init()
-        label.text = ""
-        label.textColor = .secondaryLabel
-        label.font = .systemFont(ofSize: 14, weight: .regular)
-        label.numberOfLines = 1
-        return label
+        let l = UILabel()
+        l.font = .systemFont(ofSize: 14, weight: .regular)
+        l.textColor = UIColor.systemGray
+        l.numberOfLines = 1
+        return l
     }()
-    
-    private let chatDateTimeLabel: UILabel = {
-        let label: UILabel = .init()
-        label.text = ""
-        label.textColor = .secondaryLabel
-        label.font = .systemFont(ofSize: 12, weight: .regular)
-        label.numberOfLines = 1
-        return label
+
+    private let timeLabel: UILabel = {
+        let l = UILabel()
+        l.font = .systemFont(ofSize: 12, weight: .regular)
+        l.textColor = UIColor.systemGray2
+        return l
     }()
-    
-    private let messageCountLabel: UILabel = {
-        let label: UILabel = .init()
-        label.text = ""
-        label.textColor = .white
-        label.font = .systemFont(ofSize: 10, weight: .bold)
-        label.clipsToBounds = true
-        label.layer.cornerRadius = 16
-        label.backgroundColor = .accent
-        return label
+
+    private let unreadBadge: UILabel = {
+        let l = UILabel()
+        l.font = .systemFont(ofSize: 11, weight: .bold)
+        l.textColor = .white
+        l.textAlignment = .center
+        l.backgroundColor = .accent
+        l.layer.cornerRadius = 11
+        l.clipsToBounds = true
+        l.isHidden = true
+        return l
     }()
-    
-    // MARK: - Inits
-    
+
+    private let separator: UIView = {
+        let v = UIView()
+        v.backgroundColor = UIColor(red: 0.92, green: 0.93, blue: 0.95, alpha: 1.0)
+        return v
+    }()
+
+    // MARK: - Init
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupUI()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - Publics
-    
-    func configure(with userModel: UserModel) {
-        
+}
+
+// MARK: - Configure
+
+extension ChatListCell {
+    func configure(with item: ChatItem) {
+        nameLabel.text = item.userName
+        lastMessageLabel.text = item.lastMessage
+        timeLabel.text = item.time
+
+        if let initials = item.groupInitials {
+            initialsLabel.text = initials
+            initialsLabel.isHidden = false
+            avatarImageView.image = nil
+            avatarImageView.backgroundColor = UIColor.accent.withAlphaComponent(0.12)
+        } else {
+            initialsLabel.isHidden = true
+            avatarImageView.image = UIImage(systemName: "person.fill")
+        }
+
+        onlineDot.isHidden = !item.isOnline
+
+        if item.unreadCount > 0 {
+            unreadBadge.text = "\(item.unreadCount)"
+            unreadBadge.isHidden = false
+            timeLabel.textColor = .accent
+        } else {
+            unreadBadge.isHidden = true
+            timeLabel.textColor = UIColor.systemGray2
+        }
     }
 }
 
-// MARK: - Privates
+// MARK: - Private Setup
 
 private extension ChatListCell {
     func setupUI() {
-        addViews()
-        configureLayout()
-    }
-    
-    func addViews() {
-        contentView.addSubviews([
-            userPhotoImageView,
-            userNameLabel,
-            lastMessageLabel,
-            chatDateTimeLabel,
-            messageCountLabel
-        ])
-    }
-    
-    func configureLayout() {
-        userPhotoImageView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
+        selectionStyle = .none
+        backgroundColor = .white
+
+        avatarContainer.addSubviews([avatarImageView, initialsLabel, onlineDot])
+        contentView.addSubviews([avatarContainer, nameLabel, lastMessageLabel, timeLabel, unreadBadge, separator])
+
+        avatarContainer.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(16)
-            $0.width.height.equalTo(64)
+            $0.centerY.equalToSuperview()
+            $0.width.height.equalTo(56)
         }
-        
-        userNameLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(16)
-            $0.leading.equalTo(userPhotoImageView.snp.trailing).offset(16)
+
+        avatarImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        initialsLabel.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        onlineDot.snp.makeConstraints {
+            $0.trailing.bottom.equalToSuperview().inset(-1)
+            $0.width.height.equalTo(12)
         }
-        
+
+        nameLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(18)
+            $0.leading.equalTo(avatarContainer.snp.trailing).offset(12)
+            $0.trailing.lessThanOrEqualTo(timeLabel.snp.leading).offset(-8)
+        }
+
         lastMessageLabel.snp.makeConstraints {
-            $0.top.equalTo(userNameLabel.snp.bottom).offset(8)
-            $0.leading.equalTo(userPhotoImageView.snp.trailing).offset(16)
+            $0.top.equalTo(nameLabel.snp.bottom).offset(4)
+            $0.leading.equalTo(avatarContainer.snp.trailing).offset(12)
+            $0.trailing.lessThanOrEqualTo(unreadBadge.snp.leading).offset(-8)
         }
-        
-        chatDateTimeLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().inset(24)
+
+        timeLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(20)
+            $0.trailing.equalToSuperview().inset(16)
         }
-        
-        messageCountLabel.snp.makeConstraints {
-            $0.top.equalTo(userNameLabel.snp.bottom).offset(8)
-            $0.trailing.equalToSuperview().inset(24)
-            $0.width.height.equalTo(32)
+
+        unreadBadge.snp.makeConstraints {
+            $0.centerY.equalTo(lastMessageLabel)
+            $0.trailing.equalToSuperview().inset(16)
+            $0.width.height.equalTo(22)
+        }
+
+        separator.snp.makeConstraints {
+            $0.leading.equalTo(avatarContainer.snp.trailing).offset(12)
+            $0.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(0.5)
         }
     }
 }

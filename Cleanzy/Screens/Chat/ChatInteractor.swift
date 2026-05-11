@@ -16,5 +16,7 @@ final class ChatInteractor {
 // MARK: - ChatInteractorInputProtocol
 
 extension ChatInteractor: ChatInteractorInputProtocol {
-    
+    func fetchChats() {
+        presenter?.didFetchChats(ChatItem.mockList)
+    }
 }
