@@ -2,8 +2,6 @@
 //  FavoritesInteractor.swift
 //  Cleanzy
 //
-//  Created by Burak Özdemir on 11.12.2025.
-//
 
 import Foundation
 
@@ -17,7 +15,14 @@ final class FavoritesInteractor {
 
 extension FavoritesInteractor: FavoritesInteractorInputProtocol {
     func fetchFavorites() {
-        let items = FavoritesManager.shared.getFavorites()
-        presenter?.didFetchFavorites(items)
+        FavoritesManager.shared.fetchFavorites { [weak self] result in
+            switch result {
+            case .success(let items):
+                self?.presenter?.didFetchFavorites(items)
+            case .failure(let error):
+                self?.presenter?.didFetchFavorites([])
+                print("[FavoritesInteractor] fetchFavorites error: \(error)")
+            }
+        }
     }
 }

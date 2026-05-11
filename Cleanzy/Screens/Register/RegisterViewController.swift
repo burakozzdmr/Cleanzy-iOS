@@ -222,7 +222,8 @@ private extension RegisterViewController {
         guard let fullNameText = nameTextField.text, !fullNameText.isEmpty,
               let emailText = emailTextField.text,
               let passwordText = passwordTextField.text else { return }
-        presenter.didRegisterTapped(fullName: fullNameText, email: emailText, password: passwordText)
+        let role = userTypeSegmentedControl.selectedSegmentIndex == 0 ? "CUSTOMER" : "CLEANER"
+        presenter.didRegisterTapped(fullName: fullNameText, email: emailText, password: passwordText, role: role)
     }
     
     func dismissKeyboard() {

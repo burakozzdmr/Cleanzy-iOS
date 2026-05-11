@@ -18,9 +18,9 @@ final class RegisterPresenter {
 // MARK: - RegisterPresenterProtocol
 
 extension RegisterPresenter: RegisterPresenterProtocol {
-    func didRegisterTapped(fullName: String, email: String, password: String) {
+    func didRegisterTapped(fullName: String, email: String, password: String, role: String) {
         view?.showLoading()
-        interactor?.sendRegisterRequest(fullName: fullName, email: email, password: password)
+        interactor?.sendRegisterRequest(fullName: fullName, email: email, password: password, role: role)
     }
 }
 

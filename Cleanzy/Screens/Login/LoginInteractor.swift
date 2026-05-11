@@ -33,7 +33,12 @@ extension LoginInteractor: LoginInteractorInputProtocol {
                     self?.presenter?.didLoginFailure(with: error.networkErrorMessage)
                 }
             } receiveValue: { [weak self] response in
-                KeychainManager.shared.saveAccessToken(response.data.accessToken)
+                let data = response.data
+                KeychainManager.shared.saveAccessToken(data.accessToken)
+                KeychainManager.shared.saveUserId(data.userId)
+                KeychainManager.shared.saveUserName(data.fullName)
+                KeychainManager.shared.saveUserEmail(data.email)
+                KeychainManager.shared.saveUserRole(data.role)
                 self?.presenter?.didLoginSuccess()
             }
             .store(in: &cancellables)

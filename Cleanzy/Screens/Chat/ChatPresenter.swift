@@ -31,8 +31,8 @@ extension ChatPresenter: ChatPresenterProtocol {
 
     func didConfirmDeleteChat(at index: Int) {
         guard index < items.count else { return }
-        items.remove(at: index)
-        view?.deleteChat(at: index)
+        let item = items[index]
+        interactor?.deleteConversation(conversationID: item.conversationID)
     }
 }
 
@@ -42,5 +42,15 @@ extension ChatPresenter: ChatInteractorOutputProtocol {
     func didFetchChats(_ items: [ChatItem]) {
         self.items = items
         view?.displayChats(items)
+    }
+
+    func didDeleteConversation(conversationID: Int) {
+        guard let index = items.firstIndex(where: { $0.conversationID == conversationID }) else { return }
+        items.remove(at: index)
+        view?.deleteChat(at: index)
+    }
+
+    func didFailDeletingConversation(with message: String) {
+        view?.showAlert(with: .init(title: "Hata", message: message))
     }
 }

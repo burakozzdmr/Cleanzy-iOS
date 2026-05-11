@@ -36,20 +36,16 @@ final class CreateMeetViewController: UIViewController {
 
     private let addressCard: UIView = .init()
 
-    private let addressLabel: UILabel = {
-        let l = UILabel()
-        l.font = .systemFont(ofSize: 15, weight: .semibold)
-        l.textColor = .black
-        l.text = "Ev (Kadıköy)"
-        return l
-    }()
-
-    private let addressDetailLabel: UILabel = {
-        let l = UILabel()
-        l.font = .systemFont(ofSize: 13, weight: .regular)
-        l.textColor = .systemGray
-        l.text = "Caferağa Mah. Moda Cad. No:1..."
-        return l
+    private lazy var addressTextField: UITextField = {
+        let tf = UITextField()
+        tf.placeholder = "Adresinizi girin (Mahalle, Cadde, No...)"
+        tf.font = .systemFont(ofSize: 14, weight: .regular)
+        tf.textColor = .black
+        tf.borderStyle = .none
+        tf.returnKeyType = .done
+        tf.delegate = self
+        tf.addTarget(self, action: #selector(addressDidChange), for: .editingChanged)
+        return tf
     }()
 
     // MARK: - Calendar Card
@@ -141,6 +137,7 @@ final class CreateMeetViewController: UIViewController {
     }
 
     func confirmTapped() {
+        view.endEditing(true)
         presenter?.didTapConfirm()
     }
 
@@ -149,6 +146,10 @@ final class CreateMeetViewController: UIViewController {
         selectedHouseSize = size
         applyHouseSizeSelection()
         presenter?.didSelectHouseSize(size)
+    }
+
+    func addressDidChange(_ sender: UITextField) {
+        presenter?.didChangeAddress(sender.text ?? "")
     }
 }
 
@@ -176,6 +177,13 @@ private extension CreateMeetViewController {
         addViews()
         configureLayout()
         setupCalendarCallbacks()
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 
     func addViews() {
@@ -233,35 +241,41 @@ private extension CreateMeetViewController {
     // MARK: - Card Builders
 
     func buildAddressCard() {
+        let sectionLabel = makeSectionLabel("Adres")
+
         let pinIcon = UIImageView(image: UIImage(systemName: "mappin.circle.fill"))
         pinIcon.tintColor = .accent
         pinIcon.contentMode = .scaleAspectFit
 
-        let changeButton = UIButton(type: .system)
-        changeButton.setTitle("Değiştir", for: .normal)
-        changeButton.setTitleColor(.accent, for: .normal)
-        changeButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
+        let fieldContainer: UIView = {
+            let v = UIView()
+            v.backgroundColor = UIColor.systemGray6
+            v.layer.cornerRadius = 12
+            return v
+        }()
 
-        let textStack = UIStackView(arrangedSubviews: [addressLabel, addressDetailLabel])
-        textStack.axis = .vertical
-        textStack.spacing = 3
+        fieldContainer.addSubviews([pinIcon, addressTextField])
+        addressCard.addSubviews([sectionLabel, fieldContainer])
 
-        addressCard.addSubviews([pinIcon, textStack, changeButton])
-
+        sectionLabel.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview().inset(16)
+        }
+        fieldContainer.snp.makeConstraints {
+            $0.top.equalTo(sectionLabel.snp.bottom).offset(10)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(16)
+            $0.height.equalTo(52)
+        }
         pinIcon.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(16)
+            $0.leading.equalToSuperview().offset(14)
             $0.centerY.equalToSuperview()
-            $0.width.height.equalTo(28)
+            $0.width.height.equalTo(22)
         }
-        textStack.snp.makeConstraints {
+        addressTextField.snp.makeConstraints {
             $0.leading.equalTo(pinIcon.snp.trailing).offset(10)
-            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(14)
+            $0.top.bottom.equalToSuperview()
         }
-        changeButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
-            $0.centerY.equalToSuperview()
-        }
-        addressCard.snp.makeConstraints { $0.height.equalTo(64) }
     }
 
     func buildCalendarCard() {
@@ -445,6 +459,15 @@ private extension CreateMeetViewController {
 @objc private extension CreateMeetViewController {
     func extraToggled(_ sender: UISwitch) {
         presenter?.didToggleExtraService(at: sender.tag)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+
+extension CreateMeetViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
 

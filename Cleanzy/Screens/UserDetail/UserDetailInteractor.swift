@@ -13,10 +13,15 @@ import Foundation
 final class UserDetailInteractor {
     weak var presenter: UserDetailInteractorOutputProtocol?
     private let cleanersService: CleanersServiceProtocol
+    private let reviewsService: ReviewsServiceProtocol
     private var cancellables: Set<AnyCancellable> = .init()
 
-    init(cleanersService: CleanersServiceProtocol = CleanersService()) {
+    init(
+        cleanersService: CleanersServiceProtocol = CleanersService(),
+        reviewsService: ReviewsServiceProtocol = ReviewsService()
+    ) {
         self.cleanersService = cleanersService
+        self.reviewsService  = reviewsService
     }
 }
 
@@ -32,6 +37,22 @@ extension UserDetailInteractor: UserDetailInteractorInputProtocol {
                 }
             } receiveValue: { [weak self] response in
                 self?.presenter?.didFetchCleanerDetail(response.data)
+            }
+            .store(in: &cancellables)
+    }
+
+    func fetchReviews(cleanerID: Int) {
+        reviewsService.getReviewsByCleanerID(request: GetReviewsByCleanerIDRequestModel(cleanerID: cleanerID))
+            .receive(on: DispatchQueue.main)
+            .sink { _ in } receiveValue: { [weak self] response in
+                let reviews = response.data.map { model -> UserDetailReviewItem in
+                    UserDetailReviewItem(
+                        reviewerName: model.reviewerName ?? "Anonim",
+                        rating: Int(model.rating ?? 0),
+                        comment: model.comment ?? ""
+                    )
+                }
+                self?.presenter?.didFetchReviews(reviews)
             }
             .store(in: &cancellables)
     }

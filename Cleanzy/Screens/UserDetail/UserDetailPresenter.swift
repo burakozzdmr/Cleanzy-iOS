@@ -20,12 +20,6 @@ final class UserDetailPresenter {
     init(cleanerID: Int) {
         self.cleanerID = cleanerID
     }
-
-    // Yorumlar endpoint mevcut olmadığından geçici mock veri
-    private var mockReviews: [UserDetailReviewItem] = [
-        .init(reviewerName: "Ayşe K.", rating: 5, comment: "Çok titiz ve profesyonel. Evim pırıl pırıl oldu, çok memnun kaldım."),
-        .init(reviewerName: "Mehmet T.", rating: 4, comment: "Zamanında geldi ve işini hızlıca halletti. Kesinlikle tavsiye ederim.")
-    ]
 }
 
 // MARK: - UserDetailPresenterProtocol
@@ -44,8 +38,9 @@ extension UserDetailPresenter: UserDetailPresenterProtocol {
     func didTapFavorite() {
         guard let item = currentItem else { return }
         let favoriteItem = FavoriteItem(from: item)
-        let isFavorited = FavoritesManager.shared.toggleFavorite(favoriteItem)
-        view?.updateFavoriteButton(isFavorited: isFavorited)
+        FavoritesManager.shared.toggleFavorite(favoriteItem) { [weak self] isFavorited in
+            self?.view?.updateFavoriteButton(isFavorited: isFavorited)
+        }
     }
 }
 
@@ -56,9 +51,15 @@ extension UserDetailPresenter: UserDetailInteractorOutputProtocol {
         view?.hideLoading()
         let item = UserDetailItem(from: cleaner)
         currentItem = item
-        view?.displayDetail(item, reviews: mockReviews)
+        view?.displayDetail(item, reviews: [])
         let isFavorited = FavoritesManager.shared.isFavorite(cleanerID: item.id)
         view?.updateFavoriteButton(isFavorited: isFavorited)
+        // Also fetch reviews
+        interactor?.fetchReviews(cleanerID: cleanerID)
+    }
+
+    func didFetchReviews(_ reviews: [UserDetailReviewItem]) {
+        view?.appendReviews(reviews)
     }
 
     func didFailFetchingDetail(with message: String) {

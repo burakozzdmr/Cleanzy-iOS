@@ -19,11 +19,16 @@ final class ProfilePresenter {
 
 extension ProfilePresenter: ProfilePresenterProtocol {
     func viewDidLoad() {
+        view?.showLoading()
         interactor?.fetchUserInfo()
     }
 
     func didTapRow(_ row: ProfileRow) {
         switch row {
+        case .editProfile:
+            router?.navigateToEditProfile()
+        case .paymentMethods:
+            router?.navigateToPaymentMethods()
         case .logout:
             KeychainManager.shared.clearSession()
             router?.navigateToLogin()
@@ -37,6 +42,12 @@ extension ProfilePresenter: ProfilePresenterProtocol {
 
 extension ProfilePresenter: ProfileInteractorOutputProtocol {
     func didFetchUserInfo(name: String, memberType: String) {
+        view?.hideLoading()
         view?.displayUserInfo(name: name, memberType: memberType)
+    }
+
+    func didFailFetchingUserInfo(with message: String) {
+        view?.hideLoading()
+        view?.showAlert(with: .init(title: "Hata", message: message))
     }
 }

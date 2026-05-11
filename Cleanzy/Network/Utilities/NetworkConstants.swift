@@ -26,12 +26,14 @@ enum NetworkConstants {
     }
     
     enum Endpoints {
-        static let jobsPath = "/jobs"
-        static let favoritesPath = "/favorites"
-        static let authPath = "/auth"
-        static let profilePath = "/profile"
-        static let mePath = "/profile/me"
-        static let customersPath = "/customers"
-        static let cleanersPath = "/cleaners"
+        static let jobsPath           = "/jobs"
+        static let favoritesPath      = "/favorites"
+        static let authPath           = "/auth"
+        static let profilePath        = "/profile"
+        static let mePath             = "/profile/me"
+        static let customersPath      = "/customers"
+        static let cleanersPath       = "/cleaners"
+        static let conversationsPath  = "/conversations"
+        static let reviewsPath        = "/reviews"
     }
 }

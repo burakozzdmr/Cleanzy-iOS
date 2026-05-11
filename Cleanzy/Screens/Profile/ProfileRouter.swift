@@ -23,4 +23,14 @@ extension ProfileRouter: ProfileRouterProtocol {
         window.rootViewController = UINavigationController(rootViewController: loginVC)
         UIView.transition(with: window, duration: 0.35, options: .transitionCrossDissolve, animations: nil)
     }
+
+    func navigateToEditProfile() {
+        let editVC = EditProfileBuilder.createModule()
+        viewController?.navigationController?.pushViewController(editVC, animated: true)
+    }
+
+    func navigateToPaymentMethods() {
+        let payVC = PaymentMethodsBuilder.createModule()
+        viewController?.navigationController?.pushViewController(payVC, animated: true)
+    }
 }

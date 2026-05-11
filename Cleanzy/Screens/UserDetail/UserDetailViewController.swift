@@ -624,22 +624,17 @@ extension UserDetailViewController: UserDetailViewProtocol {
         }
     }
 
+    func appendReviews(_ reviews: [UserDetailReviewItem]) {
+        reviews.forEach { review in
+            reviewsStackView.addArrangedSubview(makeReviewView(review))
+        }
+    }
+
     func updateFavoriteButton(isFavorited: Bool) {
         let iconName = isFavorited ? "heart.fill" : "heart"
         let tint: UIColor = isFavorited ? .systemRed : UIColor(red: 0.25, green: 0.27, blue: 0.32, alpha: 1.0)
         favoriteButton.setImage(UIImage(systemName: iconName), for: .normal)
         favoriteButton.tintColor = tint
-        
-        AlertManager.shared.showAlert(
-            with: AlertModel(
-                title: "Cleanzy",
-                message: "Favorilere eklendi.",
-                actions: [
-                    UIAlertAction(title: "Tamam", style: .default)
-                ]
-            ),
-            from: self
-        )
     }
 
     func showLoading() {

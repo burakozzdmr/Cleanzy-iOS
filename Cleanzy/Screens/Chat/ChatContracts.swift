@@ -22,12 +22,15 @@ protocol ChatInteractorInputProtocol: BaseInteractorInputProtocol, AnyObject {
     var presenter: ChatInteractorOutputProtocol? { get set }
 
     func fetchChats()
+    func deleteConversation(conversationID: Int)
 }
 
 // MARK: - ChatInteractorOutputProtocol
 
 protocol ChatInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyObject {
     func didFetchChats(_ items: [ChatItem])
+    func didDeleteConversation(conversationID: Int)
+    func didFailDeletingConversation(with message: String)
 }
 
 // MARK: - ChatPresenterProtocol

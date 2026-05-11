@@ -21,6 +21,13 @@ final class CreateMeetPresenter {
     private var selectedTime: String?
     private var selectedHouseSize: HouseSize = .medium
     private var extraServices: [ExtraServiceItem] = ExtraServiceItem.defaultList
+    private var address: String = ""
+
+    private let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return f
+    }()
 
     init(cleanerID: Int, hourlyRate: Double) {
         self.cleanerID = cleanerID
@@ -49,6 +56,10 @@ extension CreateMeetPresenter: CreateMeetPresenterProtocol {
         recalculatePrice()
     }
 
+    func didChangeAddress(_ address: String) {
+        self.address = address
+    }
+
     func didToggleExtraService(at index: Int) {
         extraServices[index].isEnabled.toggle()
         view?.reloadExtraServices(extraServices)
@@ -56,18 +67,40 @@ extension CreateMeetPresenter: CreateMeetPresenterProtocol {
     }
 
     func didTapConfirm() {
-        view?.showLoading()
-        // Randevu API endpoint hazır olduğunda burası interactor'a taşınacak.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            guard let self else { return }
-            self.view?.hideLoading()
-            let item = AppointmentConfirmItem.build(
-                houseSize: selectedHouseSize,
-                date: selectedDate,
-                timeSlot: selectedTime
-            )
-            self.router?.navigateToConfirmation(with: item)
+        guard let customerID = KeychainManager.shared.userId else {
+            view?.showAlert(with: .init(title: "Hata", message: "Oturum bilgisi bulunamadı."))
+            return
         }
+
+        let scheduledDate = selectedDate.map { dateFormatter.string(from: $0) } ?? ""
+        let scheduledTime = selectedTime ?? ""
+
+        guard !scheduledDate.isEmpty, !scheduledTime.isEmpty else {
+            view?.showAlert(with: .init(title: "Uyarı", message: "Lütfen tarih ve saat seçiniz."))
+            return
+        }
+
+        guard !address.trimmingCharacters(in: .whitespaces).isEmpty else {
+            view?.showAlert(with: .init(title: "Uyarı", message: "Lütfen adresinizi giriniz."))
+            return
+        }
+
+        let enabledExtras = extraServices
+            .filter(\.isEnabled)
+            .map { $0.title.uppercased().replacingOccurrences(of: " ", with: "_") }
+
+        let request = AddJobRequestModel(
+            cleanerID: cleanerID,
+            customerID: customerID,
+            address: address,
+            scheduledDate: scheduledDate,
+            scheduledTime: scheduledTime,
+            houseSize: selectedHouseSize.rawValue.uppercased().replacingOccurrences(of: "+", with: "_"),
+            extraServices: enabledExtras
+        )
+
+        view?.showLoading()
+        interactor?.createJob(request: request)
     }
 
     func didTapBack() {
@@ -77,15 +110,29 @@ extension CreateMeetPresenter: CreateMeetPresenterProtocol {
 
 // MARK: - CreateMeetInteractorOutputProtocol
 
-extension CreateMeetPresenter: CreateMeetInteractorOutputProtocol { }
+extension CreateMeetPresenter: CreateMeetInteractorOutputProtocol {
+    func didCreateJobSuccess(_ job: JobResponseModel) {
+        view?.hideLoading()
+        let item = AppointmentConfirmItem.build(
+            houseSize: selectedHouseSize,
+            date: selectedDate,
+            timeSlot: selectedTime
+        )
+        router?.navigateToConfirmation(with: item)
+    }
+
+    func didCreateJobFailure(with message: String) {
+        view?.hideLoading()
+        view?.showAlert(with: .init(title: "Hata", message: message))
+    }
+}
 
 // MARK: - Private
 
 private extension CreateMeetPresenter {
     func recalculatePrice() {
-        let base = hourlyRate * selectedHouseSize.priceMultiplier
+        let base   = hourlyRate * selectedHouseSize.priceMultiplier
         let extras = extraServices.filter(\.isEnabled).reduce(0) { $0 + $1.price }
-        let total = Int(base) + extras
-        view?.updateTotalPrice("₺\(total)")
+        view?.updateTotalPrice("₺\(Int(base) + extras)")
     }
 }

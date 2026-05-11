@@ -23,8 +23,8 @@ final class RegisterInteractor {
 // MARK: - RegisterInteractorInputProtocol
 
 extension RegisterInteractor: RegisterInteractorInputProtocol {
-    func sendRegisterRequest(fullName: String, email: String, password: String) {
-        let request = RegisterRequestModel(fullName: fullName, email: email, password: password)
+    func sendRegisterRequest(fullName: String, email: String, password: String, role: String) {
+        let request = RegisterRequestModel(fullName: fullName, email: email, password: password, role: role)
 
         authService.register(request: request)
             .receive(on: DispatchQueue.main)
@@ -33,8 +33,12 @@ extension RegisterInteractor: RegisterInteractorInputProtocol {
                     self?.presenter?.didRegisterFailure(with: error.networkErrorMessage)
                 }
             } receiveValue: { [weak self] response in
-                KeychainManager.shared.saveAccessToken(response.data.accessToken)
-                KeychainManager.shared.saveUserName(fullName)
+                let data = response.data
+                KeychainManager.shared.saveAccessToken(data.accessToken)
+                KeychainManager.shared.saveUserId(data.userId)
+                KeychainManager.shared.saveUserName(data.fullName)
+                KeychainManager.shared.saveUserEmail(data.email)
+                KeychainManager.shared.saveUserRole(data.role)
                 self?.presenter?.didRegisterSuccess()
             }
             .store(in: &cancellables)

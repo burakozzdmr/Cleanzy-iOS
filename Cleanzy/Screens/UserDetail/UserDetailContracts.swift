@@ -13,6 +13,7 @@ protocol UserDetailViewProtocol: BaseViewProtocol, AnyObject {
     var presenter: UserDetailPresenterProtocol! { get set }
 
     func displayDetail(_ item: UserDetailItem, reviews: [UserDetailReviewItem])
+    func appendReviews(_ reviews: [UserDetailReviewItem])
     func updateFavoriteButton(isFavorited: Bool)
 }
 
@@ -22,12 +23,14 @@ protocol UserDetailInteractorInputProtocol: BaseInteractorInputProtocol, AnyObje
     var presenter: UserDetailInteractorOutputProtocol? { get set }
 
     func fetchCleanerDetail(cleanerID: Int)
+    func fetchReviews(cleanerID: Int)
 }
 
 // MARK: - UserDetailInteractorOutputProtocol
 
 protocol UserDetailInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyObject {
     func didFetchCleanerDetail(_ cleaner: CleanerResponseModel)
+    func didFetchReviews(_ reviews: [UserDetailReviewItem])
     func didFailFetchingDetail(with message: String)
 }
 

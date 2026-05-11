@@ -27,6 +27,7 @@ protocol ProfileInteractorInputProtocol: BaseInteractorInputProtocol, AnyObject 
 
 protocol ProfileInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyObject {
     func didFetchUserInfo(name: String, memberType: String)
+    func didFailFetchingUserInfo(with message: String)
 }
 
 // MARK: - ProfilePresenterProtocol
@@ -45,6 +46,8 @@ protocol ProfileRouterProtocol: BaseRouterProtocol, AnyObject {
     var presenter: ProfilePresenterProtocol? { get set }
 
     func navigateToLogin()
+    func navigateToEditProfile()
+    func navigateToPaymentMethods()
 }
 
 // MARK: - ProfileBuilderProtocol

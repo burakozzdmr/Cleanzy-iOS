@@ -17,8 +17,9 @@ final class AppointmentConfirmRouter {
 
 extension AppointmentConfirmRouter: AppointmentConfirmRouterProtocol {
     func navigateToAppointments() {
-        guard let currentView = presenter?.view else { return }
-        popToRoot(currentView, animated: true)
+        guard let viewController = presenter?.view as? UIViewController else { return }
+        let appointmentsVC = AppointmentsBuilder.createModule()
+        viewController.navigationController?.pushViewController(appointmentsVC, animated: true)
     }
 
     func navigateToHome() {

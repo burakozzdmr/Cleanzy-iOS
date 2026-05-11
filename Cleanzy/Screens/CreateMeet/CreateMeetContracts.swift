@@ -20,11 +20,16 @@ protocol CreateMeetViewProtocol: BaseViewProtocol, AnyObject {
 
 protocol CreateMeetInteractorInputProtocol: BaseInteractorInputProtocol, AnyObject {
     var presenter: CreateMeetInteractorOutputProtocol? { get set }
+
+    func createJob(request: AddJobRequestModel)
 }
 
 // MARK: - CreateMeetInteractorOutputProtocol
 
-protocol CreateMeetInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyObject { }
+protocol CreateMeetInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyObject {
+    func didCreateJobSuccess(_ job: JobResponseModel)
+    func didCreateJobFailure(with message: String)
+}
 
 // MARK: - CreateMeetPresenterProtocol
 
@@ -37,6 +42,7 @@ protocol CreateMeetPresenterProtocol: BasePresenterProtocol, AnyObject {
     func didSelectTime(_ time: String)
     func didSelectHouseSize(_ size: HouseSize)
     func didToggleExtraService(at index: Int)
+    func didChangeAddress(_ address: String)
     func didTapConfirm()
     func didTapBack()
 }

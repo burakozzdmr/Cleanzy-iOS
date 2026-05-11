@@ -11,6 +11,7 @@ import Foundation
 
 struct ChatItem {
     let id: Int
+    let conversationID: Int
     let userName: String
     let lastMessage: String
     let time: String
@@ -19,12 +20,29 @@ struct ChatItem {
     let isOnline: Bool
     let groupInitials: String?
 
-    static let mockList: [ChatItem] = [
-        ChatItem(id: 1, userName: "Ayşe Y.", lastMessage: "Merhaba, yarın saat 2'de uygun...", time: "10:30", unreadCount: 2, profilePhotoURL: nil, isOnline: true, groupInitials: nil),
-        ChatItem(id: 2, userName: "Mehmet T.", lastMessage: "Teşekkürler, görüşmek üzere.", time: "Dün", unreadCount: 0, profilePhotoURL: nil, isOnline: false, groupInitials: nil),
-        ChatItem(id: 3, userName: "Elif K.", lastMessage: "✓✓ Randevunuz onaylandı.", time: "Pzt", unreadCount: 0, profilePhotoURL: nil, isOnline: false, groupInitials: nil),
-        ChatItem(id: 4, userName: "Can B.", lastMessage: "Konumu gönderdim, bekliyorum.", time: "Pzt", unreadCount: 0, profilePhotoURL: nil, isOnline: false, groupInitials: nil),
-        ChatItem(id: 5, userName: "Zeynep S.", lastMessage: "Tamamdır, anlaştık.", time: "2 Haz", unreadCount: 0, profilePhotoURL: nil, isOnline: false, groupInitials: nil),
-        ChatItem(id: 6, userName: "Temizlik Ekibi", lastMessage: "Kampanya kodunuz tanımlandı.", time: "1 Haz", unreadCount: 0, profilePhotoURL: nil, isOnline: false, groupInitials: "EK")
-    ]
+    init(from model: ConversationResponseModel) {
+        self.id               = model.id ?? 0
+        self.conversationID   = model.id ?? 0
+        self.userName         = model.participantName ?? "Bilinmiyor"
+        self.lastMessage      = model.lastMessage ?? ""
+        self.time             = model.lastMessageTime ?? ""
+        self.unreadCount      = model.unreadCount ?? 0
+        self.profilePhotoURL  = model.participantPhotoURL
+        self.isOnline         = model.isOnline ?? false
+        self.groupInitials    = nil
+    }
+
+    // Fallback for tests / offline scenarios
+    init(id: Int, conversationID: Int = 0, userName: String, lastMessage: String, time: String,
+         unreadCount: Int, profilePhotoURL: String?, isOnline: Bool, groupInitials: String?) {
+        self.id              = id
+        self.conversationID  = conversationID
+        self.userName        = userName
+        self.lastMessage     = lastMessage
+        self.time            = time
+        self.unreadCount     = unreadCount
+        self.profilePhotoURL = profilePhotoURL
+        self.isOnline        = isOnline
+        self.groupInitials   = groupInitials
+    }
 }
