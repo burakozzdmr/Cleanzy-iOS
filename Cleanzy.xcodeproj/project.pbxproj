@@ -6,11 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		08101EBD2FA754740076A7E8 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 08101EBC2FA754740076A7E8 /* Lottie */; };
-		08101EC02FA7548F0076A7E8 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 08101EBF2FA7548F0076A7E8 /* SnapKit */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		08D3DD5C2EBE265D0065AAD4 /* Cleanzy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cleanzy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -41,8 +36,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				08101EBD2FA754740076A7E8 /* Lottie in Frameworks */,
-				08101EC02FA7548F0076A7E8 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,8 +78,6 @@
 			);
 			name = Cleanzy;
 			packageProductDependencies = (
-				08101EBC2FA754740076A7E8 /* Lottie */,
-				08101EBF2FA7548F0076A7E8 /* SnapKit */,
 			);
 			productName = Cleanzy;
 			productReference = 08D3DD5C2EBE265D0065AAD4 /* Cleanzy.app */;
@@ -116,10 +107,6 @@
 			);
 			mainGroup = 08D3DD532EBE265D0065AAD4;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				08101EBB2FA754740076A7E8 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				08101EBE2FA7548F0076A7E8 /* XCRemoteSwiftPackageReference "SnapKit" */,
-			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 08D3DD5D2EBE265D0065AAD4 /* Products */;
 			projectDirPath = "";
@@ -372,38 +359,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		08101EBB2FA754740076A7E8 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.6.0;
-			};
-		};
-		08101EBE2FA7548F0076A7E8 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.7.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		08101EBC2FA754740076A7E8 /* Lottie */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 08101EBB2FA754740076A7E8 /* XCRemoteSwiftPackageReference "lottie-ios" */;
-			productName = Lottie;
-		};
-		08101EBF2FA7548F0076A7E8 /* SnapKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 08101EBE2FA7548F0076A7E8 /* XCRemoteSwiftPackageReference "SnapKit" */;
-			productName = SnapKit;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 08D3DD542EBE265D0065AAD4 /* Project object */;
 }
