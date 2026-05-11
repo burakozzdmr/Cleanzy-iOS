@@ -18,9 +18,9 @@ final class RegisterPresenter {
 // MARK: - RegisterPresenterProtocol
 
 extension RegisterPresenter: RegisterPresenterProtocol {
-    func didRegisterTapped(with email: String, and password: String, as userTypeIndex: Int) {
+    func didRegisterTapped(fullName: String, email: String, password: String) {
         view?.showLoading()
-        interactor?.sendRegisterRequest(with: email, and: password, as: userTypeIndex)
+        interactor?.sendRegisterRequest(fullName: fullName, email: email, password: password)
     }
 }
 
@@ -32,13 +32,8 @@ extension RegisterPresenter: RegisterInteractorOutputProtocol {
         router?.registerToPrepareContentScreen()
     }
     
-    func didRegisterFailure() {
+    func didRegisterFailure(with message: String) {
         view?.hideLoading()
-        view?.showAlert(
-            with: .init(
-                title: "HATA",
-                message: "Register Failed"
-            )
-        )
+        view?.showAlert(with: .init(title: "Kayıt Hatası", message: message))
     }
 }

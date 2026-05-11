@@ -10,11 +10,9 @@ import UIKit
 // MARK: - HomepageRouter
 
 final class HomepageRouter {
-    var presenter: HomepagePresenterProtocol?
+    weak var presenter: HomepagePresenterProtocol?
 }
 
 // MARK: - HomepageRouterProtocol
 
-extension HomepageRouter: HomepageRouterProtocol {
-    
-}
+extension HomepageRouter: HomepageRouterProtocol { }

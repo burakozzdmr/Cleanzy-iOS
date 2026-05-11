@@ -25,7 +25,7 @@ protocol LoginInteractorInputProtocol: BaseInteractorInputProtocol, AnyObject {
 
 protocol LoginInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyObject {
     func didLoginSuccess()
-    func didLoginFailure()
+    func didLoginFailure(with message: String)
 }
 
 // MARK: - LoginPresenterProtocol

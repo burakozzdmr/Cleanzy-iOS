@@ -40,13 +40,8 @@ extension LoginPresenter: LoginInteractorOutputProtocol {
         router?.loginToHomeScreen()
     }
     
-    func didLoginFailure() {
+    func didLoginFailure(with message: String) {
         view?.hideLoading()
-        view?.showAlert(
-            with: .init(
-                title: "HATA",
-                message: "Login Failed"
-            )
-        )
+        view?.showAlert(with: .init(title: "Giriş Hatası", message: message))
     }
 }

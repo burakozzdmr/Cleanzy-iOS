@@ -219,9 +219,10 @@ private extension RegisterViewController {
             return
         }
         
-        guard let emailText = emailTextField.text,
+        guard let fullNameText = nameTextField.text, !fullNameText.isEmpty,
+              let emailText = emailTextField.text,
               let passwordText = passwordTextField.text else { return }
-        presenter.didRegisterTapped(with: emailText, and: passwordText, as: userTypeSegmentedControl.selectedSegmentIndex)
+        presenter.didRegisterTapped(fullName: fullNameText, email: emailText, password: passwordText)
     }
     
     func dismissKeyboard() {
@@ -254,10 +255,7 @@ extension RegisterViewController: RegisterViewProtocol {
     
     func showAlert(with alertModel: AlertModel) {
         AlertManager.shared.showAlert(
-            with: AlertModel(
-                title: alertModel.title,
-                message: alertModel.message,
-            ),
+            with: AlertModel(title: alertModel.title, message: alertModel.message),
             from: self
         )
     }

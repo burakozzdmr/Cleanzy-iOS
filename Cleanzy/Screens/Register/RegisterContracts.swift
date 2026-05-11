@@ -18,14 +18,14 @@ protocol RegisterViewProtocol: BaseViewProtocol, AnyObject {
 protocol RegisterInteractorInputProtocol: BaseInteractorInputProtocol, AnyObject {
     var presenter: RegisterInteractorOutputProtocol? { get set }
     
-    func sendRegisterRequest(with email: String, and password: String, as userTypeIndex: Int)
+    func sendRegisterRequest(fullName: String, email: String, password: String)
 }
 
 // MARK: - RegisterInteractorOutputProtocol
 
 protocol RegisterInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyObject {
     func didRegisterSuccess()
-    func didRegisterFailure()
+    func didRegisterFailure(with message: String)
 }
 
 // MARK: - RegisterPresenterProtocol
@@ -35,7 +35,7 @@ protocol RegisterPresenterProtocol: BasePresenterProtocol, AnyObject {
     var interactor: RegisterInteractorInputProtocol? { get set }
     var router: RegisterRouterProtocol? { get set }
     
-    func didRegisterTapped(with email: String, and password: String, as userTypeIndex: Int)
+    func didRegisterTapped(fullName: String, email: String, password: String)
 }
 
 // MARK: - RegisterRouterProtocol

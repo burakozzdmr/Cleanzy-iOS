@@ -11,18 +11,24 @@ import Foundation
 
 protocol HomepageViewProtocol: BaseViewProtocol, AnyObject {
     var presenter: HomepagePresenterProtocol! { get set }
+
+    func displayCleaners(_ items: [HomepageCleanerItem])
+    func displayGreeting(_ name: String)
 }
 
 // MARK: - HomepageInteractorInputProtocol
 
 protocol HomepageInteractorInputProtocol: BaseInteractorInputProtocol, AnyObject {
     var presenter: HomepageInteractorOutputProtocol? { get set }
+
+    func fetchCleaners()
 }
 
 // MARK: - HomepageInteractorOutputProtocol
 
 protocol HomepageInteractorOutputProtocol: BaseInteractorOutputProtocol, AnyObject {
-    
+    func didFetchCleaners(_ cleaners: [CleanerResponseModel])
+    func didFailFetchingCleaners(with message: String)
 }
 
 // MARK: - HomepagePresenterProtocol
@@ -41,6 +47,4 @@ protocol HomepageRouterProtocol: BaseRouterProtocol, AnyObject {
 
 // MARK: - HomepageBuilderProtocol
 
-protocol HomepageBuilderProtocol: BaseBuilderProtocol, AnyObject {
-    
-}
+protocol HomepageBuilderProtocol: BaseBuilderProtocol, AnyObject { }
