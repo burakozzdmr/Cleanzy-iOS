@@ -12,6 +12,7 @@ protocol BaseRequest {
     var path: String { get }
     var method: HTTPMethod { get }
     var headers: [String: String] { get }
+    var body: Data? { get }
     
     func buildURLRequest() -> Result<URLRequest, NetworkError>
 }
