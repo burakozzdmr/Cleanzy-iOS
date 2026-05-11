@@ -21,13 +21,6 @@ final class PaymentSelectionSheetViewController: UIViewController {
 
     // MARK: - UI
 
-    private let dragHandle: UIView = {
-        let v = UIView()
-        v.backgroundColor    = UIColor.systemGray4
-        v.layer.cornerRadius = 2.5
-        return v
-    }()
-
     private let titleLabel: UILabel = {
         let l = UILabel()
         l.text      = "Ödeme Yöntemi Seç"
@@ -95,21 +88,14 @@ final class PaymentSelectionSheetViewController: UIViewController {
 
 private extension PaymentSelectionSheetViewController {
     func setupUI() {
-        view.backgroundColor  = .systemBackground
-        view.layer.cornerRadius = 20
-        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        view.backgroundColor = .systemBackground
 
-        view.addSubviews([dragHandle, titleLabel, tableView, emptyLabel, addCardButton])
+        view.addSubviews([titleLabel, tableView, emptyLabel, addCardButton])
 
-        dragHandle.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(10)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(40)
-            $0.height.equalTo(5)
-        }
-
+        // Native UISheetPresentationController grabber yaklaşık 20pt alıyor,
+        // safeAreaLayoutGuide.top bunu zaten hesaba katıyor.
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(dragHandle.snp.bottom).offset(16)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
             $0.leading.equalToSuperview().offset(20)
         }
 
