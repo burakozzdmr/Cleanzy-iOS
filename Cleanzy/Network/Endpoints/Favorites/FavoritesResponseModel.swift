@@ -17,7 +17,7 @@ struct FavoriteResponseModel: Codable {
     let role: UserRole?
     let profilePhotoURL: String?
     let rating: Double?
-    let createdAt: Date?
+    let createdAt: String?   // ISO-8601 string — Date olursa decoder hata veriyor
 }
 
 // MARK: - Type Aliases
