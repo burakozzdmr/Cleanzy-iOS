@@ -182,12 +182,30 @@ final class UserDetailViewController: UIViewController {
         return b
     }()
 
+    // MARK: - Chat Button
+
+    private lazy var chatButton: UIButton = {
+        let b = UIButton()
+        b.setTitle("Sohbet Başlat", for: .normal)
+        b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+        b.setTitleColor(.accent, for: .normal)
+        b.backgroundColor = .white
+        b.layer.cornerRadius = 16
+        b.layer.borderWidth = 2
+        b.layer.borderColor = UIColor.accent.cgColor
+        b.setImage(UIImage(systemName: "message.fill"), for: .normal)
+        b.tintColor = .accent
+        b.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
+        b.addTarget(self, action: #selector(chatTapped), for: .touchUpInside)
+        return b
+    }()
+
     // MARK: - Appointment Button
 
     private lazy var appointmentButton: UIButton = {
         let b = UIButton()
         b.setTitle("Randevu Oluştur", for: .normal)
-        b.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+        b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
         b.backgroundColor = .accent
         b.layer.cornerRadius = 16
         b.addTarget(self, action: #selector(appointmentTapped), for: .touchUpInside)
@@ -218,6 +236,10 @@ final class UserDetailViewController: UIViewController {
 
     func appointmentTapped() {
         presenter?.didTapCreateMeet()
+    }
+
+    func chatTapped() {
+        presenter?.didTapChat()
     }
 
     func favoriteTapped() {
@@ -257,7 +279,7 @@ private extension UserDetailViewController {
     }
 
     func addViews() {
-        view.addSubviews([scrollView, appointmentButton])
+        view.addSubviews([scrollView, chatButton, appointmentButton])
         scrollView.addSubview(contentView)
 
         // Profile card
@@ -310,7 +332,7 @@ private extension UserDetailViewController {
     func configureLayout() {
         scrollView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(appointmentButton.snp.top).offset(-8)
+            $0.bottom.equalTo(chatButton.snp.top).offset(-8)
         }
 
         contentView.snp.makeConstraints {
@@ -390,11 +412,19 @@ private extension UserDetailViewController {
             $0.height.equalTo(servicesScrollView.frameLayoutGuide)
         }
 
-        // Appointment button
-        appointmentButton.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(20)
+        // Bottom action buttons — chat (left) + appointment (right)
+        chatButton.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(20)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
-            $0.height.equalTo(56)
+            $0.height.equalTo(54)
+            $0.trailing.equalTo(view.snp.centerX).offset(-6)
+        }
+
+        appointmentButton.snp.makeConstraints {
+            $0.leading.equalTo(view.snp.centerX).offset(6)
+            $0.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.height.equalTo(54)
         }
     }
 

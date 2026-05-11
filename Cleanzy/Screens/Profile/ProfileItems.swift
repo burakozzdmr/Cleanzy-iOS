@@ -24,7 +24,7 @@ enum ProfileSection: Int, CaseIterable {
 
     var rows: [ProfileRow] {
         switch self {
-        case .account:  return [.editProfile, .verifyProfile]
+        case .account:  return [.editProfile, .myAppointments, .verifyProfile]
         case .settings: return [.paymentMethods, .addresses, .notifications, .appSettings]
         case .other:    return [.helpSupport, .logout]
         }
@@ -35,6 +35,7 @@ enum ProfileSection: Int, CaseIterable {
 
 enum ProfileRow {
     case editProfile
+    case myAppointments
     case verifyProfile
     case paymentMethods
     case addresses
@@ -46,6 +47,7 @@ enum ProfileRow {
     var title: String {
         switch self {
         case .editProfile:      return "Profilimi Düzenle"
+        case .myAppointments:   return "Randevularım"
         case .verifyProfile:    return "Profilini Doğrula"
         case .paymentMethods:   return "Ödeme Yöntemlerim"
         case .addresses:        return "Adreslerim"
@@ -58,15 +60,17 @@ enum ProfileRow {
 
     var subtitle: String? {
         switch self {
-        case .verifyProfile: return "Kimliğinizi doğrulayın"
-        default:             return nil
+        case .myAppointments: return nil
+        case .verifyProfile:  return "Kimliğinizi doğrulayın"
+        default:              return nil
         }
     }
 
     var iconName: String {
         switch self {
-        case .editProfile:    return "pencil"
-        case .verifyProfile:  return "checkmark.shield.fill"
+        case .editProfile:      return "pencil"
+        case .myAppointments:   return "calendar.badge.clock"
+        case .verifyProfile:    return "checkmark.shield.fill"
         case .paymentMethods: return "creditcard.fill"
         case .addresses:      return "location.fill"
         case .notifications:  return "bell.fill"
@@ -78,8 +82,9 @@ enum ProfileRow {
 
     var iconBackgroundColor: UIColor {
         switch self {
-        case .editProfile:    return UIColor.accent
-        case .verifyProfile:  return UIColor(red: 0.18, green: 0.72, blue: 0.34, alpha: 1.0)
+        case .editProfile:      return UIColor.accent
+        case .myAppointments:   return UIColor(red: 0.36, green: 0.20, blue: 0.90, alpha: 1.0)
+        case .verifyProfile:    return UIColor(red: 0.18, green: 0.72, blue: 0.34, alpha: 1.0)
         case .paymentMethods: return UIColor(red: 0.20, green: 0.46, blue: 0.90, alpha: 1.0)
         case .addresses:      return UIColor(red: 0.98, green: 0.45, blue: 0.28, alpha: 1.0)
         case .notifications:  return UIColor(red: 0.98, green: 0.70, blue: 0.10, alpha: 1.0)

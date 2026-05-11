@@ -27,12 +27,13 @@ extension ProfilePresenter: ProfilePresenterProtocol {
         switch row {
         case .editProfile:
             router?.navigateToEditProfile()
+        case .myAppointments:
+            router?.navigateToMyAppointments()
         case .paymentMethods:
             router?.navigateToPaymentMethods()
         case .logout:
             view?.showLogoutConfirmation()
         default:
-
             break
         }
     }

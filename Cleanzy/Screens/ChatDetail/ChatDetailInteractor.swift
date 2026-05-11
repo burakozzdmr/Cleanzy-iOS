@@ -13,11 +13,16 @@ import Foundation
 final class ChatDetailInteractor {
     weak var presenter: ChatDetailInteractorOutputProtocol?
     private let conversationsService: ConversationsServiceProtocol
+    private let webSocketManager: WebSocketManager
     private var conversationID: Int = 0
     private var cancellables: Set<AnyCancellable> = .init()
 
-    init(conversationsService: ConversationsServiceProtocol = ConversationsService()) {
+    init(
+        conversationsService: ConversationsServiceProtocol = ConversationsService(),
+        webSocketManager: WebSocketManager = .shared
+    ) {
         self.conversationsService = conversationsService
+        self.webSocketManager     = webSocketManager
     }
 }
 
@@ -26,8 +31,12 @@ final class ChatDetailInteractor {
 extension ChatDetailInteractor: ChatDetailInteractorInputProtocol {
     func fetchMessages(for chatItem: ChatItem) {
         self.conversationID = chatItem.conversationID
+        let currentUserId = KeychainManager.shared.userId ?? 0
 
-        let request = GetMessagesByConversationIDRequestModel(conversationID: chatItem.conversationID)
+        let request = GetMessagesByConversationIDRequestModel(
+            conversationID: chatItem.conversationID,
+            currentUserId: currentUserId
+        )
         conversationsService.getMessages(request: request)
             .receive(on: DispatchQueue.main)
             .sink { [weak self, chatItem] completion in
@@ -38,7 +47,7 @@ extension ChatDetailInteractor: ChatDetailInteractorInputProtocol {
             } receiveValue: { [weak self] response in
                 let currentUserId = KeychainManager.shared.userId ?? 0
                 let messages: [ChatMessageItem] = response.data.map { model in
-                    let isMine = (model.senderUserId ?? -1) == currentUserId
+                    let isMine = model.isMine ?? ((model.senderId ?? -1) == currentUserId)
                     let time   = model.sentAt ?? ""
                     return ChatMessageItem(text: model.content ?? "", time: time, isSentByMe: isMine)
                 }
@@ -51,15 +60,36 @@ extension ChatDetailInteractor: ChatDetailInteractorInputProtocol {
     func sendMessage(_ text: String) {
         let now     = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
         let message = ChatMessageItem(text: text, time: now, isSentByMe: true)
-        // Optimistically show the message immediately
+        // Optimistically show the message in the UI immediately
         presenter?.didSendMessage(message)
 
         guard conversationID != 0 else { return }
-        let request = SendMessageRequestModel(conversationID: conversationID, content: text)
-        conversationsService.sendMessage(request: request)
-            .receive(on: DispatchQueue.main)
-            .sink { _ in } receiveValue: { _ in }
-            .store(in: &cancellables)
+        let senderId = KeychainManager.shared.userId ?? 0
+
+        // Send via WebSocket for real-time delivery
+        webSocketManager.send(conversationId: conversationID, content: text, senderId: senderId)
+    }
+
+    func connectWebSocket() {
+        guard conversationID != 0 else { return }
+
+        webSocketManager.onMessageReceived = { [weak self] model in
+            guard let self else { return }
+            let currentUserId = KeychainManager.shared.userId ?? 0
+            let isMine = model.isMine ?? ((model.senderId ?? -1) == currentUserId)
+            // Skip messages sent by self (already shown optimistically)
+            guard !isMine else { return }
+            let time = model.sentAt ?? DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
+            let item = ChatMessageItem(text: model.content ?? "", time: time, isSentByMe: false)
+            self.presenter?.didReceiveMessage(item)
+        }
+
+        webSocketManager.connect(conversationId: conversationID)
+    }
+
+    func disconnectWebSocket() {
+        webSocketManager.onMessageReceived = nil
+        webSocketManager.disconnect()
     }
 }
 

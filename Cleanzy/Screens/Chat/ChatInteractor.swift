@@ -24,11 +24,11 @@ final class ChatInteractor {
 
 extension ChatInteractor: ChatInteractorInputProtocol {
     func fetchChats() {
-        conversationsService.getConversations(request: GetConversationsRequestModel())
+        let userId = KeychainManager.shared.userId ?? 0
+        conversationsService.getConversations(request: GetConversationsRequestModel(userId: userId))
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 if case .failure = completion {
-                    // Fallback to empty list on error
                     self?.presenter?.didFetchChats([])
                 }
             } receiveValue: { [weak self] response in
@@ -39,7 +39,8 @@ extension ChatInteractor: ChatInteractorInputProtocol {
     }
 
     func deleteConversation(conversationID: Int) {
-        let request = DeleteConversationRequestModel(conversationID: conversationID)
+        let userId = KeychainManager.shared.userId ?? 0
+        let request = DeleteConversationRequestModel(conversationID: conversationID, userId: userId)
         conversationsService.deleteConversation(request: request)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in

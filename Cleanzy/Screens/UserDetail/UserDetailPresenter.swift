@@ -38,6 +38,11 @@ extension UserDetailPresenter: UserDetailPresenterProtocol {
         router?.navigateToCreateMeet(cleanerID: cleanerID, hourlyRate: hourlyRate, cleanerName: cleanerName)
     }
 
+    func didTapChat() {
+        guard let item = currentItem else { return }
+        interactor?.createOrGetConversation(participantUserID: item.id)
+    }
+
     func didTapFavorite() {
         guard let item = currentItem else { return }
         let favoriteItem = FavoriteItem(from: item)
@@ -79,6 +84,17 @@ extension UserDetailPresenter: UserDetailInteractorOutputProtocol {
     }
 
     func didFailFetchingDetail(with message: String) {
+        view?.hideLoading()
+        view?.showAlert(with: .init(title: "Hata", message: message))
+    }
+
+    func didCreateOrGetConversation(_ conversation: ConversationResponseModel) {
+        view?.hideLoading()
+        let chatItem = ChatItem(from: conversation)
+        router?.navigateToChat(with: chatItem)
+    }
+
+    func didFailCreatingConversation(with message: String) {
         view?.hideLoading()
         view?.showAlert(with: .init(title: "Hata", message: message))
     }
