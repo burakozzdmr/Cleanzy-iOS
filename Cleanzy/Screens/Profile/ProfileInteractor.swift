@@ -10,11 +10,14 @@ import Foundation
 // MARK: - ProfileInteractor
 
 final class ProfileInteractor {
-    var presenter: profileInteractorOutputProtocol?
+    weak var presenter: ProfileInteractorOutputProtocol?
 }
 
 // MARK: - ProfileInteractorInputProtocol
 
 extension ProfileInteractor: ProfileInteractorInputProtocol {
-    
+    func fetchUserInfo() {
+        let name = KeychainManager.shared.userName ?? "Kullanıcı"
+        presenter?.didFetchUserInfo(name: name, memberType: "Standart Üye")
+    }
 }

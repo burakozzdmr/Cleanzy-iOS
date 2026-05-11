@@ -10,7 +10,7 @@ import Foundation
 // MARK: - ProfilePresenter
 
 final class ProfilePresenter {
-    var view: ProfileViewProtocol?
+    weak var view: ProfileViewProtocol?
     var interactor: ProfileInteractorInputProtocol?
     var router: ProfileRouterProtocol?
 }
@@ -18,11 +18,25 @@ final class ProfilePresenter {
 // MARK: - ProfilePresenterProtocol
 
 extension ProfilePresenter: ProfilePresenterProtocol {
-    
+    func viewDidLoad() {
+        interactor?.fetchUserInfo()
+    }
+
+    func didTapRow(_ row: ProfileRow) {
+        switch row {
+        case .logout:
+            KeychainManager.shared.clearSession()
+            router?.navigateToLogin()
+        default:
+            break
+        }
+    }
 }
 
 // MARK: - ProfileInteractorOutputProtocol
 
-extension ProfilePresenter: profileInteractorOutputProtocol {
-    
+extension ProfilePresenter: ProfileInteractorOutputProtocol {
+    func didFetchUserInfo(name: String, memberType: String) {
+        view?.displayUserInfo(name: name, memberType: memberType)
+    }
 }

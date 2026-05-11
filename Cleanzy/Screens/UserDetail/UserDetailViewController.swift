@@ -166,6 +166,22 @@ final class UserDetailViewController: UIViewController {
         return sv
     }()
 
+    // MARK: - Favorite Button
+
+    private lazy var favoriteButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.setImage(UIImage(systemName: "heart"), for: .normal)
+        b.tintColor = UIColor(red: 0.25, green: 0.27, blue: 0.32, alpha: 1.0)
+        b.backgroundColor = .white
+        b.layer.cornerRadius = 18
+        b.layer.shadowColor = UIColor.black.cgColor
+        b.layer.shadowOpacity = 0.10
+        b.layer.shadowOffset = CGSize(width: 0, height: 2)
+        b.layer.shadowRadius = 4
+        b.addTarget(self, action: #selector(favoriteTapped), for: .touchUpInside)
+        return b
+    }()
+
     // MARK: - Appointment Button
 
     private lazy var appointmentButton: UIButton = {
@@ -203,6 +219,10 @@ final class UserDetailViewController: UIViewController {
     func appointmentTapped() {
         presenter?.didTapCreateMeet()
     }
+
+    func favoriteTapped() {
+        presenter?.didTapFavorite()
+    }
 }
 
 // MARK: - Private Setup
@@ -219,6 +239,10 @@ private extension UserDetailViewController {
             action: #selector(backTapped)
         )
         navigationItem.leftBarButtonItem?.tintColor = .black
+
+        favoriteButton.frame = CGRect(x: 0, y: 0, width: 36, height: 36)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: favoriteButton)
+
         navigationController?.navigationBar.tintColor = .black
         navigationController?.navigationBar.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 17, weight: .semibold),
@@ -598,6 +622,24 @@ extension UserDetailViewController: UserDetailViewProtocol {
         reviews.forEach { review in
             reviewsStackView.addArrangedSubview(makeReviewView(review))
         }
+    }
+
+    func updateFavoriteButton(isFavorited: Bool) {
+        let iconName = isFavorited ? "heart.fill" : "heart"
+        let tint: UIColor = isFavorited ? .systemRed : UIColor(red: 0.25, green: 0.27, blue: 0.32, alpha: 1.0)
+        favoriteButton.setImage(UIImage(systemName: iconName), for: .normal)
+        favoriteButton.tintColor = tint
+        
+        AlertManager.shared.showAlert(
+            with: AlertModel(
+                title: "Cleanzy",
+                message: "Favorilere eklendi.",
+                actions: [
+                    UIAlertAction(title: "Tamam", style: .default)
+                ]
+            ),
+            from: self
+        )
     }
 
     func showLoading() {

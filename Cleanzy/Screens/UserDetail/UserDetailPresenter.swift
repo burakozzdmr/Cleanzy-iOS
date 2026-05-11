@@ -40,6 +40,13 @@ extension UserDetailPresenter: UserDetailPresenterProtocol {
         let hourlyRate = currentItem?.hourlyRate ?? 0
         router?.navigateToCreateMeet(cleanerID: cleanerID, hourlyRate: hourlyRate)
     }
+
+    func didTapFavorite() {
+        guard let item = currentItem else { return }
+        let favoriteItem = FavoriteItem(from: item)
+        let isFavorited = FavoritesManager.shared.toggleFavorite(favoriteItem)
+        view?.updateFavoriteButton(isFavorited: isFavorited)
+    }
 }
 
 // MARK: - UserDetailInteractorOutputProtocol
@@ -50,6 +57,8 @@ extension UserDetailPresenter: UserDetailInteractorOutputProtocol {
         let item = UserDetailItem(from: cleaner)
         currentItem = item
         view?.displayDetail(item, reviews: mockReviews)
+        let isFavorited = FavoritesManager.shared.isFavorite(cleanerID: item.id)
+        view?.updateFavoriteButton(isFavorited: isFavorited)
     }
 
     func didFailFetchingDetail(with message: String) {

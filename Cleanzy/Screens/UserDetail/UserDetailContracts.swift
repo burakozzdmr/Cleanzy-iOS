@@ -13,6 +13,7 @@ protocol UserDetailViewProtocol: BaseViewProtocol, AnyObject {
     var presenter: UserDetailPresenterProtocol! { get set }
 
     func displayDetail(_ item: UserDetailItem, reviews: [UserDetailReviewItem])
+    func updateFavoriteButton(isFavorited: Bool)
 }
 
 // MARK: - UserDetailInteractorInputProtocol
@@ -38,6 +39,7 @@ protocol UserDetailPresenterProtocol: BasePresenterProtocol, AnyObject {
     var router: UserDetailRouterProtocol? { get set }
 
     func didTapCreateMeet()
+    func didTapFavorite()
 }
 
 // MARK: - UserDetailRouterProtocol
