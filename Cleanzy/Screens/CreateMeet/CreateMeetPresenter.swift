@@ -56,7 +56,18 @@ extension CreateMeetPresenter: CreateMeetPresenterProtocol {
     }
 
     func didTapConfirm() {
-        view?.showAlert(with: .init(title: "Randevu Oluşturuldu", message: "Randevunuz başarıyla oluşturuldu."))
+        view?.showLoading()
+        // Randevu API endpoint hazır olduğunda burası interactor'a taşınacak.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+            guard let self else { return }
+            self.view?.hideLoading()
+            let item = AppointmentConfirmItem.build(
+                houseSize: selectedHouseSize,
+                date: selectedDate,
+                timeSlot: selectedTime
+            )
+            self.router?.navigateToConfirmation(with: item)
+        }
     }
 
     func didTapBack() {

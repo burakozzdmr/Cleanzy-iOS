@@ -10,11 +10,15 @@ import UIKit
 // MARK: - FavoritesRouter
 
 final class FavoritesRouter {
-    var presenter: FavoritesPresenterProtocol?
+    weak var presenter: FavoritesPresenterProtocol?
+    weak var viewController: UIViewController?
 }
 
 // MARK: - FavoritesRouterProtocol
 
 extension FavoritesRouter: FavoritesRouterProtocol {
-    
+    func navigateToDetail(cleanerID: Int) {
+        let detailVC = UserDetailBuilder.createModule(with: cleanerID)
+        viewController?.navigationController?.pushViewController(detailVC, animated: true)
+    }
 }

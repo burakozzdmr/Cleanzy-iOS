@@ -47,6 +47,7 @@ protocol CreateMeetRouterProtocol: BaseRouterProtocol, AnyObject {
     var presenter: CreateMeetPresenterProtocol? { get set }
 
     func navigateBack()
+    func navigateToConfirmation(with item: AppointmentConfirmItem)
 }
 
 // MARK: - CreateMeetBuilderProtocol

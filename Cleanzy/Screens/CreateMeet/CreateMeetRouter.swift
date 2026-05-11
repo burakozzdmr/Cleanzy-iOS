@@ -20,4 +20,10 @@ extension CreateMeetRouter: CreateMeetRouterProtocol {
         guard let currentView = presenter?.view else { return }
         pop(currentView, animated: true)
     }
+
+    func navigateToConfirmation(with item: AppointmentConfirmItem) {
+        guard let currentView = presenter?.view else { return }
+        let target = AppointmentConfirmBuilder.createModule(with: item)
+        push(currentViewController: currentView, targetViewController: target, animated: true)
+    }
 }

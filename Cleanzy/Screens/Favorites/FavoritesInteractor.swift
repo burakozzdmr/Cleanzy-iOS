@@ -16,5 +16,8 @@ final class FavoritesInteractor {
 // MARK: - FavoritesInteractorInputProtocol
 
 extension FavoritesInteractor: FavoritesInteractorInputProtocol {
-    
+    func fetchFavorites() {
+        let items = FavoritesManager.shared.getFavorites()
+        presenter?.didFetchFavorites(items)
+    }
 }

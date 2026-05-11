@@ -10,19 +10,35 @@ import Foundation
 // MARK: - FavoritesPresenter
 
 final class FavoritesPresenter {
-    var view: FavoritesViewProtocol?
+    weak var view: FavoritesViewProtocol?
     var interactor: FavoritesInteractorInputProtocol?
     var router: FavoritesRouterProtocol?
+
+    private var items: [FavoriteItem] = []
 }
 
 // MARK: - FavoritesPresenterProtocol
 
 extension FavoritesPresenter: FavoritesPresenterProtocol {
-    
+    func viewDidLoad() {
+        interactor?.fetchFavorites()
+    }
+
+    func didSelectItem(at index: Int) {
+        guard index < items.count else { return }
+        router?.navigateToDetail(cleanerID: items[index].cleanerID)
+    }
 }
 
-// MARK: - FavoritesPresenterInteractorOutputProtocol
+// MARK: - FavoritesInteractorOutputProtocol
 
 extension FavoritesPresenter: FavoritesInteractorOutputProtocol {
-    
+    func didFetchFavorites(_ items: [FavoriteItem]) {
+        self.items = items
+        if items.isEmpty {
+            view?.showEmptyState()
+        } else {
+            view?.displayFavorites(items)
+        }
+    }
 }
